@@ -338,9 +338,9 @@ MFBD提供了下面的测试例程，如果你使用其他开发板和其他RTOS
 
 该例程为**stm32f429-atk-apollo**的裸机移植使用例程。
 
-### [CH573-EVT](https://github.com/smartmx/mfbd-examples/tree/main/examples/CH573_MFBD)
+### [CH573-EVT](https://github.com/smartmx/mfbd-examples/tree/main/CH573_MFBD)
 
-该例程为基于沁恒微电子蓝牙芯片的基于tmos的移植使用例程。
+该例程为基于沁恒微电子蓝牙芯片CH573的基于tmos的移植使用例程。
 
 ## 其他功能
 
