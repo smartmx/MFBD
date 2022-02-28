@@ -157,13 +157,13 @@ extern void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group);
 
 /* use #define to declare the mfbd button object easily. */
 #define MFBD_MBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, MULTICLICK_TIME, BTN_UP_CODE, BTN_LONG_CODE, NEXT, BTN_DOWN_CODE,...)  \
-static const mfbd_btn_code_t NAME##_CodeDown[MFBD_MULTI_MAX_CLICK + 1] = {BTN_DOWN_CODE,__VA_ARGS__};    \
+static const mfbd_btn_code_t NAME##_down_codes[MFBD_MULTI_MAX_CLICK + 1] = {BTN_DOWN_CODE,__VA_ARGS__};    \
 static const mfbd_mbtn_info_t NAME##_info = { \
         FILTER_TIME, \
         REPEAT_TIME, \
         LONG_TIME, \
         MULTICLICK_TIME, \
-        NAME##_CodeDown, \
+        NAME##_down_codes, \
         BTN_UP_CODE, \
         BTN_LONG_CODE, \
         BTN_INDEX, \
