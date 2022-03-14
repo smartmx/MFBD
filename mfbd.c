@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-02-22     smartmx      the first version
+ * 2022-03-15     smartmx      each mbtn has it's own max multi-click times
  *
  */
 
@@ -314,8 +315,8 @@ report_btn_down_code:
                         _pbtn_group->btn_value_report(_pbtn->btn_info->btn_up_code);
                     }
 
-                    /* if MFBD_MULTI_MAX_CLICK not 0 and less than MFBD_MULTI_MAX_CLICK, inc multi-click */
-                    if (((_pbtn->multiclick_state < MFBD_MULTI_MAX_CLICK) && (_pbtn->btn_info->multiclick_time != 0)) \
+                    /* if multiclick_state is not 0 and less than max_multiclick_state, inc multiclick_state */
+                    if (((_pbtn->multiclick_state < _pbtn->btn_info->max_multiclick_state) && (_pbtn->btn_info->multiclick_time != 0)) \
                             && (!((_pbtn->btn_info->long_time != 0) && (_pbtn->long_count >= _pbtn->btn_info->long_time))))
                     {
                         _pbtn->multiclick_state++;

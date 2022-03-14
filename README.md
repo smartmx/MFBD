@@ -28,9 +28,6 @@ typedef uint32_t    mfbd_btn_index_t;
 
 /* set MFBD_USE_BTN_SCAN_AFTER_FUNC to 1 will enable running after_function after run button detection function */
 #define MFBD_USE_BTN_SCAN_AFTER_FUNC     0
-
-/* if use multi-click button, set MFBD_MULTI_MAX_CLICK over 0, set 1 will support double-click, set two will support triple click, max legal value is 255. */
-#define MFBD_MULTI_MAX_CLICK             3
 ```
 
 `mfbd_btn_code_t`：按键键值的类型。  
@@ -133,6 +130,7 @@ MFBD提供了三种按键处理，之所以提供三种按键处理，是为了�
 | `btn_up_code`     | 按键按下后再松开后，需要上报的键值。如果设置为0，就不会上报。 |
 | `btn_long_code`   | 按键长按后，需要上报的键值。如果设置为0，就不会上报。 |
 | `btn_index`       | 按键组扫描时，调用按键组结构体中`is_btn_down_func`所传入的参数。 |
+| `max_multiclick_state`| mbtn按键最大支持的连击次数。 |
 
 **按键控制结构体成员介绍：**
 
@@ -161,7 +159,7 @@ ringbuf环形缓冲区是MFBD的好搭档，推荐移植使用时和ringbuf配�
 
 ```c
 /* use #define to declare the mfbd button object easily. */
-#define MFBD_TBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, BTN_DOWN_CODE, BTN_UP_CODE, NEXT)  \
+#define MFBD_TBTN_DEFINE(NAME, NEXT, BTN_INDEX, FILTER_TIME, BTN_DOWN_CODE, BTN_UP_CODE)  \
 static const mfbd_tbtn_info_t NAME##_info = { \
         BTN_DOWN_CODE, \
         BTN_UP_CODE, \
@@ -179,14 +177,14 @@ static mfbd_tbtn_t NAME = { \
 通过上面的宏定义，可以使用如下语句直接定义一个mfbd tiny button
 
 ```c
-MFBD_TBTN_DEFINE(test_tbtn, GPIO_Pin_12, 3, 0x1201, 0x1200, NULL);
+MFBD_TBTN_DEFINE(test_tbtn, NULL, 1, 3, 0x1201, 0x1200);
 ```
 
 ### normal button定义示例
 
 ```c
 /* use #define to declare the mfbd button object easily. */
-#define MFBD_NBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE, NEXT)  \
+#define MFBD_NBTN_DEFINE(NAME, NEXT, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE)  \
 static const mfbd_nbtn_info_t NAME##_info = { \
         FILTER_TIME, \
         REPEAT_TIME, \
@@ -209,15 +207,15 @@ static mfbd_nbtn_t NAME = { \
 通过上面的宏定义，可以使用如下语句直接定义一个mfbd normal button
 
 ```c
-MFBD_NBTN_DEFINE(test_nbtn1, GPIO_Pin_14, 3, 0, 150, 0x1401, 0x1400, 0x1402, NULL);
+MFBD_NBTN_DEFINE(test_nbtn, NULL, 3, 3, 0, 150, 0x1401, 0x1400, 0x1402);
 ```
 
 ### multi-function button定义示例
 
 ```c
 /* use #define to declare the mfbd button object easily. */
-#define MFBD_MBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, MULTICLICK_TIME, BTN_UP_CODE, BTN_LONG_CODE, NEXT, BTN_DOWN_CODE,...)  \
-static const mfbd_btn_code_t NAME##_down_codes[MFBD_MULTI_MAX_CLICK + 1] = {BTN_DOWN_CODE,__VA_ARGS__};    \
+#define MFBD_MBTN_DEFINE(NAME, NEXT, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, MULTICLICK_TIME, MAX_MULTICLICK_STATE, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE, ...)  \
+static const mfbd_btn_code_t NAME##_down_codes[MAX_MULTICLICK_STATE + 1] = {BTN_DOWN_CODE,__VA_ARGS__};    \
 static const mfbd_mbtn_info_t NAME##_info = { \
         FILTER_TIME, \
         REPEAT_TIME, \
@@ -227,6 +225,7 @@ static const mfbd_mbtn_info_t NAME##_info = { \
         BTN_UP_CODE, \
         BTN_LONG_CODE, \
         BTN_INDEX, \
+        MAX_MULTICLICK_STATE, \
 };\
 static mfbd_mbtn_t NAME = { \
         NEXT,\
@@ -245,7 +244,7 @@ multi-function button和其他按键不同，它的宏定义中使用了可变�
 通过上面的宏定义，可以使用如下语句直接定义一个mfbd multi-function button  
 
 ```c
-MFBD_MBTN_DEFINE(test_mbtn, GPIO_Pin_15, 3, 30, 150, 75, 0x1500, 0, NULL, 0x1501, 0x1511, 0x1521, 0x1531);
+MFBD_MBTN_DEFINE(test_mbtn, NULL, 4, 3, 30, 150, 75, 3, 0x1501, 0x1500, 0, 0x1511, 0x1521, 0x1531);
 ```
 
 ## MFBD 使用示例
@@ -255,74 +254,111 @@ MFBD_MBTN_DEFINE(test_mbtn, GPIO_Pin_15, 3, 30, 150, 75, 0x1500, 0, NULL, 0x1501
 按键上报函数和读取函数统一如下  
 
 ```c
-unsigned char Is_btn_down_func(mfbd_btn_index_t btn_index)
+unsigned char bsp_btn_check(mfbd_btn_index_t btn_index)
 {
-  if(GPIO_ReadInputDataBit(GPIOA, btn_index))
-  {
+    switch (btn_index)
+    {
+    case 1:
+        if (rt_pin_read(BTN_KEY0) == 0)
+        {
+            return 1;
+        }
+        break;
+    case 2:
+        if (rt_pin_read(BTN_KEY1) == 0)
+        {
+            return 1;
+        }
+        break;
+    case 3:
+        if (rt_pin_read(BTN_KEY2) == 0)
+        {
+            return 1;
+        }
+        break;
+    case 4:
+        if (rt_pin_read(BTN_WK_UP) == 1)
+        {
+            return 1;
+        }
+        break;
+    default:
+        break;
+    }
     return 0;
-  }
-  return 1;
 }
 
-void Btn_value_report(mfbd_btn_code_t btn_value)
+void bsp_btn_value_report(mfbd_btn_code_t btn_value)
 {
-  printf("%04x\n",btn_value);
+    rt_kprintf("%04x\n", btn_value);
 }
 ```
 
 ### tiny button使用示例
 
 ```c
-MFBD_TBTN_DEFINE(test_tbtn, GPIO_Pin_12, 3, 0x1201, 0x1200, NULL);
+MFBD_TBTN_DEFINE(test_tbtn, NULL, 1, 3, 0x1201, 0x1200);
 
-const mfbd_group_t test_tbtn_group = {
-   Is_btn_down_func,
-   Btn_value_report,
-   &test_tbtn,
+const mfbd_group_t test_tbtn_group =
+{
+    bsp_btn_check,
+    bsp_btn_value_report,
+    &test_tbtn,
 };
 
-while(1)
+void main()
 {
-    mfbd_tbtn_scan(&test_tbtn_group);
-    delay_ms(10);
+    while(1)
+    {
+        mfbd_tbtn_scan(&test_tbtn_group);
+        delay_ms(10);
+    }
 }
 ```
 
 ### normal button使用示例
 
 ```c
-MFBD_NBTN_DEFINE(test_nbtn1, GPIO_Pin_14, 3, 0, 150, 0x1401, 0x1400, 0x1402, NULL);
+MFBD_NBTN_DEFINE(test_nbtn1, NULL, 3, 3, 0, 150, 0x1401, 0x1400, 0x1402);
 
-MFBD_NBTN_DEFINE(test_nbtn, GPIO_Pin_13, 3, 30, 150, 0x1301, 0x1300, 0, &test_nbtn1);
+MFBD_NBTN_DEFINE(test_nbtn, &test_nbtn1, 2, 3, 30, 150, 0x1301, 0x1300, 0);
 
-const mfbd_group_t test_nbtn_group = {
-    Is_btn_down_func,
-    Btn_value_report,
+const mfbd_group_t test_nbtn_group =
+{
+    bsp_btn_check,
+    bsp_btn_value_report,
     &test_nbtn,
 };
 
-while(1)
+void main()
 {
-    mfbd_nbtn_scan(&test_nbtn_group);
-    delay_ms(10);
+    while(1)
+    {
+        mfbd_nbtn_scan(&test_nbtn_group);
+        delay_ms(10);
+    }
 }
 ```
 
 ### multi-function button使用示例
 
 ```c
-MFBD_MBTN_DEFINE(test_mbtn, GPIO_Pin_15, 3, 30, 150, 75, 0x1500, 0, NULL, 0x1501, 0x1511, 0x1521, 0x1531);
+MFBD_MBTN_DEFINE(test_mbtn, NULL, 4, 3, 30, 150, 75, 3, 0x1501, 0x1500, 0, 0x1511, 0x1521, 0x1531);
 
-const mfbd_group_t test_mbtn_group = {
-    Is_btn_down_func,
-    Btn_value_report,
+const mfbd_group_t test_mbtn_group =
+{
+    bsp_btn_check,
+    bsp_btn_value_report,
     &test_mbtn,
 };
 
-while(1)
+void main()
 {
-    mfbd_mbtn_scan(&test_mbtn_group);
-    delay_ms(10);
+    while(1)
+    {
+        mfbd_mbtn_scan(&test_mbtn_group);
+        delay_ms(10);
+    }
 }
 ```
 
@@ -346,7 +382,7 @@ MFBD提供了下面的测试例程，如果你使用其他开发板和其他RTOS
 
 ### 矩阵键盘
 
-矩阵键盘可以通过使能`MFBD_USE_BTN_SCAN_PRE_FUNC`，将矩阵键盘上的所有按键放通过链表链接到一起。  
+矩阵键盘可以通过使能`MFBD_USE_BTN_SCAN_PRE_FUNC`，将矩阵键盘上的所有按键通过链表链接到同一个按键组。  
 即可在每次轮询检测时，通过准备函数将所有的按键值扫描出来存放到缓存中。然后在获取函数中根据缓存获取按键值即可。  
 
 ### 组合按键
@@ -358,7 +394,7 @@ MFBD提供了下面的测试例程，如果你使用其他开发板和其他RTOS
 
 ### 低功耗
 
-低功耗可以通过使能`MFBD_USE_BTN_SCAN_AFTER_FUNC`，在每次检测完每一组的按键后，在结束函数中，将每组的外设关闭，达到低功耗的目的。  
+低功耗可以通过使能`MFBD_USE_BTN_SCAN_AFTER_FUNC`和`MFBD_USE_BTN_SCAN_PRE_FUNC`，在每次检测完每一组的按键后，在结束函数中，将每组的外设关闭，在准备函数中,将每组的外设打开，以达到低功耗的目的。  
 需要根据不同的芯片的情况分好组，不然可能导致无法正常运行。  
 
 ## [博客主页](https://blog.maxiang.vip/)

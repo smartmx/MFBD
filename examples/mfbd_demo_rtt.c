@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-02-22     smartmx      the first version
+ * 2022-03-15     smartmx      each mbtn has it's own max multi-click times
  *
  */
 
@@ -33,8 +34,8 @@ unsigned char bsp_btn_check(mfbd_btn_index_t btn_index);
     #define BTN_WK_UP GET_PIN(A, 0)
 #endif
 
-/* MFBD_TBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, BTN_DOWN_CODE, BTN_UP_CODE, NEXT) */
-MFBD_TBTN_DEFINE(test_tbtn, 1, 3, 0x1201, 0x1200, NULL);
+/* MFBD_TBTN_DEFINE(NAME, NEXT, BTN_INDEX, FILTER_TIME, BTN_DOWN_CODE, BTN_UP_CODE) */
+MFBD_TBTN_DEFINE(test_tbtn, NULL, 1, 3, 0x1201, 0x1200);
 
 const mfbd_group_t test_tbtn_group =
 {
@@ -44,10 +45,10 @@ const mfbd_group_t test_tbtn_group =
 };
 
 /* nbtn test */
-/* MFBD_NBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE, NEXT) */
-MFBD_NBTN_DEFINE(test_nbtn1, 3, 3, 0, 150, 0x1401, 0x1400, 0x1402, NULL);
+/* MFBD_NBTN_DEFINE(NAME, NEXT, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE) */
+MFBD_NBTN_DEFINE(test_nbtn1, NULL, 3, 3, 0, 150, 0x1401, 0x1400, 0x1402);
 
-MFBD_NBTN_DEFINE(test_nbtn, 2, 3, 30, 150, 0x1301, 0x1300, 0, &test_nbtn1);
+MFBD_NBTN_DEFINE(test_nbtn, &test_nbtn1, 2, 3, 30, 150, 0x1301, 0x1300, 0);
 
 const mfbd_group_t test_nbtn_group =
 {
@@ -57,8 +58,8 @@ const mfbd_group_t test_nbtn_group =
 };
 
 /* mbtn test */
-/* MFBD_MBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, MULTICLICK_TIME, BTN_UP_CODE, BTN_LONG_CODE, NEXT, BTN_DOWN_CODE, ...) */
-MFBD_MBTN_DEFINE(test_mbtn, 4, 3, 30, 150, 75, 0x1500, 0, NULL, 0x1501, 0x1511, 0x1521, 0x1531);
+/* MFBD_MBTN_DEFINE(NAME, NEXT, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, MULTICLICK_TIME, MAX_MULTICLICK_STATE, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE, ...) */
+MFBD_MBTN_DEFINE(test_mbtn, NULL, 4, 3, 30, 150, 75, 3, 0x1501, 0x1500, 0, 0x1511, 0x1521, 0x1531);
 
 const mfbd_group_t test_mbtn_group =
 {
@@ -143,6 +144,6 @@ int mfbd_main(void)
 
     return 0;
 }
-#ifdef FINSH_USING_MSH
-    INIT_APP_EXPORT(mfbd_main);
-#endif
+
+INIT_APP_EXPORT(mfbd_main);
+

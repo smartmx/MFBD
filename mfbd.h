@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-02-22     smartmx      the first version
+ * 2022-03-15     smartmx      each mbtn has it's own max multi-click times
  *
  */
 
@@ -60,7 +61,7 @@ typedef struct _mfbd_tiny_btn_struct
 extern void mfbd_tbtn_scan(const mfbd_group_t *_pbtn_group);
 
 /* use #define to declare the mfbd button object easily. */
-#define MFBD_TBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, BTN_DOWN_CODE, BTN_UP_CODE, NEXT)  \
+#define MFBD_TBTN_DEFINE(NAME, NEXT, BTN_INDEX, FILTER_TIME, BTN_DOWN_CODE, BTN_UP_CODE)  \
 static const mfbd_tbtn_info_t NAME##_info = { \
         BTN_DOWN_CODE, \
         BTN_UP_CODE, \
@@ -101,7 +102,7 @@ typedef struct _mfbd_normal_btn_struct
 extern void mfbd_nbtn_scan(const mfbd_group_t *_pbtn_group);
 
 /* use #define to declare the mfbd button object easily. */
-#define MFBD_NBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE, NEXT)  \
+#define MFBD_NBTN_DEFINE(NAME, NEXT, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE)  \
 static const mfbd_nbtn_info_t NAME##_info = { \
         FILTER_TIME, \
         REPEAT_TIME, \
@@ -133,6 +134,7 @@ typedef struct _mfbd_mbtn_info_struct
     mfbd_btn_code_t    btn_up_code;             /* keyCode when button up, set to 0 will not report it. */
     mfbd_btn_code_t    btn_long_code;           /* keyCode when button down for long_time, set 0 will not report it ,but report btn_down_code[0] instead. */
     mfbd_btn_index_t   btn_index;               /* parameter when calling is_btn_down_func. */
+    unsigned char      max_multiclick_state;    /* max multiclick states. */
 } mfbd_mbtn_info_t;
 
 /*
@@ -156,8 +158,8 @@ typedef struct _mfbd_multi_fuction_btn_struct
 extern void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group);
 
 /* use #define to declare the mfbd button object easily. */
-#define MFBD_MBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, MULTICLICK_TIME, BTN_UP_CODE, BTN_LONG_CODE, NEXT, BTN_DOWN_CODE,...)  \
-static const mfbd_btn_code_t NAME##_down_codes[MFBD_MULTI_MAX_CLICK + 1] = {BTN_DOWN_CODE,__VA_ARGS__};    \
+#define MFBD_MBTN_DEFINE(NAME, NEXT, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, MULTICLICK_TIME, MAX_MULTICLICK_STATE, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE, ...)  \
+static const mfbd_btn_code_t NAME##_down_codes[MAX_MULTICLICK_STATE + 1] = {BTN_DOWN_CODE,__VA_ARGS__};    \
 static const mfbd_mbtn_info_t NAME##_info = { \
         FILTER_TIME, \
         REPEAT_TIME, \
@@ -167,6 +169,7 @@ static const mfbd_mbtn_info_t NAME##_info = { \
         BTN_UP_CODE, \
         BTN_LONG_CODE, \
         BTN_INDEX, \
+        MAX_MULTICLICK_STATE, \
 };\
 static mfbd_mbtn_t NAME = { \
         NEXT,\

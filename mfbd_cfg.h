@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-02-22     smartmx      the first version
+ * 2022-03-15     smartmx      each mbtn has it's own max multi-click times
  *
  */
 
@@ -33,8 +34,5 @@ typedef uint32_t    mfbd_btn_index_t;
 
 /* set MFBD_USE_BTN_SCAN_AFTER_FUNC to 1 will enable running after_function after run button detection function */
 #define MFBD_USE_BTN_SCAN_AFTER_FUNC     0
-
-/* if use multi-click button, set MFBD_MULTI_MAX_CLICK over 0, set 1 will support double-click, set two will support triple click, max legal value is 255. */
-#define MFBD_MULTI_MAX_CLICK             3
 
 #endif /* _MFBD_CFG_H_ */
