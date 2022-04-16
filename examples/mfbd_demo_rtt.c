@@ -7,12 +7,12 @@
  * Date           Author       Notes
  * 2022-02-22     smartmx      the first version
  * 2022-03-15     smartmx      each mbtn has it's own max multi-click times
+ * 2022-04-16     smartmx      drop list definitions, use arraylist, each group has all btn types.
  *
  */
 
 #include <rtthread.h>
 #include <board.h>
-
 #include "mfbd.h"
 
 void bsp_btn_value_report(mfbd_btn_code_t btn_value);
@@ -34,40 +34,62 @@ unsigned char bsp_btn_check(mfbd_btn_index_t btn_index);
     #define BTN_WK_UP GET_PIN(A, 0)
 #endif
 
-/* MFBD_TBTN_DEFINE(NAME, NEXT, BTN_INDEX, FILTER_TIME, BTN_DOWN_CODE, BTN_UP_CODE) */
-MFBD_TBTN_DEFINE(test_tbtn, NULL, 1, 3, 0x1201, 0x1200);
+#if MFBD_PARAMS_SAME_IN_GROUP
 
-const mfbd_group_t test_tbtn_group =
-{
-    bsp_btn_check,
-    bsp_btn_value_report,
-    &test_tbtn,
-};
+/* tbtn test */
+/* MFBD_TBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, BTN_DOWN_CODE, BTN_UP_CODE) */
+MFBD_TBTN_DEFINE(test_tbtn, 1, 0x1201, 0x1200);
 
 /* nbtn test */
-/* MFBD_NBTN_DEFINE(NAME, NEXT, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE) */
-MFBD_NBTN_DEFINE(test_nbtn1, NULL, 3, 3, 0, 150, 0x1401, 0x1400, 0x1402);
+/* MFBD_NBTN_DEFINE(NAME, BTN_INDEX, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE) */
+MFBD_NBTN_DEFINE(test_nbtn1, 3,  0x1401, 0x1400, 0x1402);
 
-MFBD_NBTN_DEFINE(test_nbtn, &test_nbtn1, 2, 3, 30, 150, 0x1301, 0x1300, 0);
-
-const mfbd_group_t test_nbtn_group =
-{
-    bsp_btn_check,
-    bsp_btn_value_report,
-    &test_nbtn,
-};
+MFBD_NBTN_DEFINE(test_nbtn, 2, 0x1301, 0x1300, 0x1301);
 
 /* mbtn test */
-/* MFBD_MBTN_DEFINE(NAME, NEXT, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, MULTICLICK_TIME, MAX_MULTICLICK_STATE, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE, ...) */
-MFBD_MBTN_DEFINE(test_mbtn, NULL, 4, 3, 30, 150, 75, 3, 0x1501, 0x1500, 0, 0x1511, 0x1521, 0x1531);
+/* MFBD_MBTN_DEFINE(NAME, BTN_INDEX, MAX_MULTICLICK_STATE, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE, ...) */
+MFBD_MBTN_DEFINE(test_mbtn, 4, 3, 0x1501, 0x1500, 0x1501, 0x1511, 0x1521, 0x1531);
 
-const mfbd_group_t test_mbtn_group =
+#else
+
+/* tbtn test */
+/* MFBD_TBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, BTN_DOWN_CODE, BTN_UP_CODE) */
+MFBD_TBTN_DEFINE(test_tbtn, 1, 3, 0x1201, 0x1200);
+
+/* nbtn test */
+/* MFBD_NBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE) */
+MFBD_NBTN_DEFINE(test_nbtn1, 3, 3, 0, 150, 0x1401, 0x1400, 0x1402);
+
+MFBD_NBTN_DEFINE(test_nbtn, 2, 3, 30, 150, 0x1301, 0x1300, 0x1301);
+
+/* mbtn test */
+/* MFBD_MBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, MULTICLICK_TIME, MAX_MULTICLICK_STATE, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE, ...) */
+MFBD_MBTN_DEFINE(test_mbtn, 4, 3, 30, 150, 75, 3, 0x1501, 0x1500, 0x1501, 0x1511, 0x1521, 0x1531);
+
+#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+
+MFBD_TBTN_ARRAYLIST(test_tbtn_list, &test_tbtn);
+
+MFBD_NBTN_ARRAYLIST(test_nbtn_list, &test_nbtn1, &test_nbtn);
+
+MFBD_MBTN_ARRAYLIST(test_mbtn_list, &test_mbtn);
+
+const mfbd_group_t test_btn_group =
 {
     bsp_btn_check,
     bsp_btn_value_report,
-    &test_mbtn,
-};
+    test_tbtn_list,
+    test_nbtn_list,
+    test_mbtn_list,
 
+#if MFBD_PARAMS_SAME_IN_GROUP
+    3,
+    30,
+    150,
+    75,
+#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+
+};
 
 unsigned char bsp_btn_check(mfbd_btn_index_t btn_index)
 {
@@ -112,9 +134,7 @@ static void mfbd_scan(void *arg)
 {
     while (1)
     {
-        mfbd_tbtn_scan(&test_tbtn_group); /* scan tiny button group */
-        mfbd_nbtn_scan(&test_nbtn_group); /* scan normal button group */
-        mfbd_mbtn_scan(&test_mbtn_group); /* scan multi-function button group */
+        mfbd_group_scan(&test_btn_group); /* scan button group */
         rt_thread_mdelay(10); /* scan period: 10ms */
     }
 }

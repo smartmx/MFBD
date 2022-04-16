@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2022-02-22     smartmx      the first version
  * 2022-03-15     smartmx      each mbtn has it's own max multi-click times
+ * 2022-04-16     smartmx      drop list definitions, use array, each group has all btn types.
  *
  */
 
@@ -15,32 +16,19 @@
 
 #include "mfbd_cfg.h"
 
-typedef struct _mfbd_group_struct
-{
 
-    /* used to read whether button is down. */
-    unsigned char (*is_btn_down_func)(mfbd_btn_index_t btn_index);
-
-    /* used to report btn_value, must have a legal value, must not be NULL. */
-    void (*btn_value_report)(mfbd_btn_code_t btn_value);
-
-#if MFBD_USE_BTN_SCAN_PRE_FUNC
-    /* prepare function when start to scan buttons for each group. */
-    void (*btn_scan_prepare)(void);
-#endif
-
-#if MFBD_USE_BTN_SCAN_AFTER_FUNC
-    /* function after scanning buttons for each group. */
-    void (*btn_scan_after)(void);
-#endif
-
-    /* pointer to the head of key info list */
-    void *btn_list_head;
-} mfbd_group_t;
-
-#define MFBD_GROUP_DEFINE(NAME,...) const mfbd_group_t NAME = {__VA_ARGS__}
 
 /* tiny button definitions, tiny button functions only support down and up event. */
+#if MFBD_PARAMS_SAME_IN_GROUP
+
+typedef struct _mfbd_tbtn_info_struct
+{
+    mfbd_btn_code_t    btn_down_code;               /* keyCode when button down, set to 0 will not report it. */
+    mfbd_btn_code_t    btn_up_code;                 /* keyCode when button up, set to 0 will not report it. */
+    mfbd_btn_index_t   btn_index;                   /* parameter when calling is_btn_down_func. */
+} mfbd_tbtn_info_t;
+
+#else
 
 typedef struct _mfbd_tbtn_info_struct
 {
@@ -50,32 +38,64 @@ typedef struct _mfbd_tbtn_info_struct
     mfbd_btn_index_t   btn_index;                   /* parameter when calling is_btn_down_func. */
 } mfbd_tbtn_info_t;
 
+#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+
 typedef struct _mfbd_tiny_btn_struct
 {
-    struct  _mfbd_tiny_btn_struct   *next;          /* next pointer in the button group. */
     const   mfbd_tbtn_info_t        *btn_info;      /* a pointer to mfbd_tbtn_info_t. */
     mfbd_btn_count_t                filter_count;   /* filter time count when button state changed. */
     unsigned char                   state;          /* the state of button, up or down. */
 } mfbd_tbtn_t;
 
-extern void mfbd_tbtn_scan(const mfbd_group_t *_pbtn_group);
+#if MFBD_PARAMS_SAME_IN_GROUP
 
-/* use #define to declare the mfbd button object easily. */
-#define MFBD_TBTN_DEFINE(NAME, NEXT, BTN_INDEX, FILTER_TIME, BTN_DOWN_CODE, BTN_UP_CODE)  \
-static const mfbd_tbtn_info_t NAME##_info = { \
-        BTN_DOWN_CODE, \
-        BTN_UP_CODE, \
-        FILTER_TIME, \
-        BTN_INDEX, \
-}; \
-static mfbd_tbtn_t NAME = { \
-        NEXT,\
-        &NAME##_info, \
-        0, \
-        0, \
+#define MFBD_TBTN_DEFINE(NAME, BTN_INDEX, BTN_DOWN_CODE, BTN_UP_CODE)   \
+static const mfbd_tbtn_info_t NAME##_info = {                           \
+        BTN_DOWN_CODE,                                                  \
+        BTN_UP_CODE,                                                    \
+        BTN_INDEX,                                                      \
+};                                                                      \
+mfbd_tbtn_t NAME = {                                                    \
+        &NAME##_info,                                                   \
+        0,                                                              \
+        0,                                                              \
 }
 
+#else
+
+#define MFBD_TBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, BTN_DOWN_CODE, BTN_UP_CODE)    \
+static const mfbd_tbtn_info_t NAME##_info = {                                         \
+        BTN_DOWN_CODE,                                                                \
+        BTN_UP_CODE,                                                                  \
+        FILTER_TIME,                                                                  \
+        BTN_INDEX,                                                                    \
+};                                                                                    \
+mfbd_tbtn_t NAME = {                                                                  \
+        &NAME##_info,                                                                 \
+        0,                                                                            \
+        0,                                                                            \
+}
+
+#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+
+#define MFBD_TBTN_EXTERN(NAME) extern mfbd_tbtn_t NAME
+
+#define MFBD_TBTN_ARRAYLIST(NAME, ...) mfbd_tbtn_t* NAME[] = {__VA_ARGS__, NULL}
+
+
+
 /* normal button definitions, normal button functions support down, up and long-press event. */
+#if MFBD_PARAMS_SAME_IN_GROUP
+
+typedef struct _mfbd_nbtn_info_struct
+{
+    mfbd_btn_code_t    btn_down_code;               /* keyCode when button down, set to 0 will not report it. */
+    mfbd_btn_code_t    btn_up_code;                 /* keyCode when button up, set to 0 will not report it. */
+    mfbd_btn_code_t    btn_long_code;               /* keyCode when button down for long_time, set 0 will not report it ,but report btn_down_code instead. */
+    mfbd_btn_index_t   btn_index;                   /* parameter when calling is_btn_down_func. */
+} mfbd_nbtn_info_t;
+
+#else
 
 typedef struct _mfbd_nbtn_info_struct
 {
@@ -88,10 +108,10 @@ typedef struct _mfbd_nbtn_info_struct
     mfbd_btn_index_t   btn_index;                   /* parameter when calling is_btn_down_func. */
 } mfbd_nbtn_info_t;
 
-/* normal btn_info scan up, down and long press event */
+#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+
 typedef struct _mfbd_normal_btn_struct
 {
-    struct _mfbd_normal_btn_struct    *next;            /* next pointer in the button group. */
     const   mfbd_nbtn_info_t          *btn_info;        /* a pointer to mfbd_nbtn_info_t. */
     mfbd_btn_count_t                  filter_count;     /* filter time count when button state changed. */
     mfbd_btn_count_t                  long_count;       /* long time count when button still down. */
@@ -99,30 +119,65 @@ typedef struct _mfbd_normal_btn_struct
     unsigned char                     state;            /* the state of button, up or down. */
 } mfbd_nbtn_t;
 
-extern void mfbd_nbtn_scan(const mfbd_group_t *_pbtn_group);
 
-/* use #define to declare the mfbd button object easily. */
-#define MFBD_NBTN_DEFINE(NAME, NEXT, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE)  \
-static const mfbd_nbtn_info_t NAME##_info = { \
-        FILTER_TIME, \
-        REPEAT_TIME, \
-        LONG_TIME, \
-        BTN_DOWN_CODE, \
-        BTN_UP_CODE, \
-        BTN_LONG_CODE, \
-        BTN_INDEX, \
-}; \
-static mfbd_nbtn_t NAME = { \
-        NEXT,\
-        &NAME##_info, \
-        0, \
-        0, \
-        0, \
-        0, \
+#if MFBD_PARAMS_SAME_IN_GROUP
+
+#define MFBD_NBTN_DEFINE(NAME, BTN_INDEX, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE)    \
+static const mfbd_nbtn_info_t NAME##_info = {                                           \
+        BTN_DOWN_CODE,                                                                  \
+        BTN_UP_CODE,                                                                    \
+        BTN_LONG_CODE,                                                                  \
+        BTN_INDEX,                                                                      \
+};                                                                                      \
+mfbd_nbtn_t NAME = {                                                                    \
+        &NAME##_info,                                                                   \
+        0,                                                                              \
+        0,                                                                              \
+        0,                                                                              \
+        0,                                                                              \
 }
+
+#else
+
+#define MFBD_NBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE)   \
+static const mfbd_nbtn_info_t NAME##_info = {                                                                               \
+        FILTER_TIME,                                                                                                        \
+        REPEAT_TIME,                                                                                                        \
+        LONG_TIME,                                                                                                          \
+        BTN_DOWN_CODE,                                                                                                      \
+        BTN_UP_CODE,                                                                                                        \
+        BTN_LONG_CODE,                                                                                                      \
+        BTN_INDEX,                                                                                                          \
+};                                                                                                                          \
+mfbd_nbtn_t NAME = {                                                                                                        \
+        &NAME##_info,                                                                                                       \
+        0,                                                                                                                  \
+        0,                                                                                                                  \
+        0,                                                                                                                  \
+        0,                                                                                                                  \
+}
+
+#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+
+#define MFBD_NBTN_EXTERN(NAME) extern mfbd_nbtn_t NAME
+
+#define MFBD_NBTN_ARRAYLIST(NAME, ...) mfbd_nbtn_t* NAME[] = {__VA_ARGS__, NULL}
+
 
 
 /* multi-function button definitions, multi-function button functions support down, up, long-press and multi-click event. */
+#if MFBD_PARAMS_SAME_IN_GROUP
+
+typedef struct _mfbd_mbtn_info_struct
+{
+    const mfbd_btn_code_t   *btn_down_code;           /* pointer to multi-click keyCodes when button down. */
+    mfbd_btn_code_t         btn_up_code;              /* keyCode when button up, set to 0 will not report it. */
+    mfbd_btn_code_t         btn_long_code;            /* keyCode when button down for long_time, set 0 will not report it ,but report btn_down_code[0] instead. */
+    mfbd_btn_index_t        btn_index;                /* parameter when calling is_btn_down_func. */
+    unsigned char           max_multiclick_state;     /* max multiclick states. */
+} mfbd_mbtn_info_t;
+
+#else
 
 typedef struct _mfbd_mbtn_info_struct
 {
@@ -137,6 +192,7 @@ typedef struct _mfbd_mbtn_info_struct
     unsigned char      max_multiclick_state;    /* max multiclick states. */
 } mfbd_mbtn_info_t;
 
+#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
 /*
  * @Note:
  * repeat_count and long_count are conflict to multi-click.
@@ -145,7 +201,6 @@ typedef struct _mfbd_mbtn_info_struct
  */
 typedef struct _mfbd_multi_fuction_btn_struct
 {
-    struct _mfbd_multi_fuction_btn_struct     *next;                  /* next pointer in the button group. */
     const   mfbd_mbtn_info_t                  *btn_info;              /* a pointer to mfbd_mbtn_info_t. */
     mfbd_btn_count_t                          filter_count;           /* filter time count when button state changed. */
     mfbd_btn_count_t                          long_count;             /* long time count when button still down. */
@@ -155,31 +210,108 @@ typedef struct _mfbd_multi_fuction_btn_struct
     unsigned char                             state;                  /* the state of button, up or down. */
 } mfbd_mbtn_t;
 
-extern void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group);
+#if MFBD_PARAMS_SAME_IN_GROUP
 
-/* use #define to declare the mfbd button object easily. */
-#define MFBD_MBTN_DEFINE(NAME, NEXT, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, MULTICLICK_TIME, MAX_MULTICLICK_STATE, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE, ...)  \
-static const mfbd_btn_code_t NAME##_down_codes[MAX_MULTICLICK_STATE + 1] = {BTN_DOWN_CODE,__VA_ARGS__};    \
-static const mfbd_mbtn_info_t NAME##_info = { \
-        FILTER_TIME, \
-        REPEAT_TIME, \
-        LONG_TIME, \
-        MULTICLICK_TIME, \
-        NAME##_down_codes, \
-        BTN_UP_CODE, \
-        BTN_LONG_CODE, \
-        BTN_INDEX, \
-        MAX_MULTICLICK_STATE, \
-};\
-static mfbd_mbtn_t NAME = { \
-        NEXT,\
-        &NAME##_info, \
-        0, \
-        0, \
-        0, \
-        0, \
-        0, \
-        0, \
+#define MFBD_MBTN_DEFINE(NAME, BTN_INDEX, MAX_MULTICLICK_STATE, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE, ...)   \
+static const mfbd_btn_code_t NAME##_down_codes[MAX_MULTICLICK_STATE + 1] = {BTN_DOWN_CODE, __VA_ARGS__};          \
+static const mfbd_mbtn_info_t NAME##_info = {                                                                     \
+        NAME##_down_codes,                                                                                        \
+        BTN_UP_CODE,                                                                                              \
+        BTN_LONG_CODE,                                                                                            \
+        BTN_INDEX,                                                                                                \
+        MAX_MULTICLICK_STATE,                                                                                     \
+};                                                                                                                \
+mfbd_mbtn_t NAME = {                                                                                              \
+        &NAME##_info,                                                                                             \
+        0,                                                                                                        \
+        0,                                                                                                        \
+        0,                                                                                                        \
+        0,                                                                                                        \
+        0,                                                                                                        \
+        0,                                                                                                        \
 }
+
+#else
+
+#define MFBD_MBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, MULTICLICK_TIME, MAX_MULTICLICK_STATE, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE, ...)   \
+static const mfbd_btn_code_t NAME##_down_codes[MAX_MULTICLICK_STATE + 1] = {BTN_DOWN_CODE, __VA_ARGS__};                                                                \
+static const mfbd_mbtn_info_t NAME##_info = {                                                                                                                           \
+        FILTER_TIME,                                                                                                                                                    \
+        REPEAT_TIME,                                                                                                                                                    \
+        LONG_TIME,                                                                                                                                                      \
+        MULTICLICK_TIME,                                                                                                                                                \
+        NAME##_down_codes,                                                                                                                                              \
+        BTN_UP_CODE,                                                                                                                                                    \
+        BTN_LONG_CODE,                                                                                                                                                  \
+        BTN_INDEX,                                                                                                                                                      \
+        MAX_MULTICLICK_STATE,                                                                                                                                           \
+};                                                                                                                                                                      \
+mfbd_mbtn_t NAME = {                                                                                                                                                    \
+        &NAME##_info,                                                                                                                                                   \
+        0,                                                                                                                                                              \
+        0,                                                                                                                                                              \
+        0,                                                                                                                                                              \
+        0,                                                                                                                                                              \
+        0,                                                                                                                                                              \
+        0,                                                                                                                                                              \
+}
+
+#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+
+#define MFBD_MBTN_EXTERN(NAME) extern mfbd_mbtn_t NAME
+
+#define MFBD_MBTN_ARRAYLIST(NAME, ...) mfbd_mbtn_t* NAME[] = {__VA_ARGS__, NULL}
+
+
+
+/* mfbd group struct */
+typedef struct _mfbd_group_struct
+{
+    /* used to read whether button is down. */
+    unsigned char (*is_btn_down_func)(mfbd_btn_index_t btn_index);
+
+    /* used to report btn_value, must have a legal value, must not be NULL. */
+    void (*btn_value_report)(mfbd_btn_code_t btn_value);
+
+#if MFBD_USE_TINY_BUTTON
+    /* pointer to the head of tiny buttons array */
+    mfbd_tbtn_t **tbtns;
+#endif
+
+#if MFBD_USE_NORMAL_BUTTON
+    /* pointer to the head of normal buttons array */
+    mfbd_nbtn_t **nbtns;
+#endif
+
+#if MFBD_USE_MULTIFUCNTION_BUTTON
+    /* pointer to the head of multifunction buttons array */
+    mfbd_mbtn_t **mbtns;
+#endif
+
+
+#if MFBD_PARAMS_SAME_IN_GROUP
+    /* if set MFBD_PARAMS_SAME_IN_GROUP to 1, all btns in group has same params. */
+    mfbd_btn_count_t   filter_time;             /* filter time when button state changed, please do not use 0. */
+
+    mfbd_btn_count_t   repeat_time;             /* repeat time when button still down for over long_time, set 0 will disable repeat time count. */
+
+    mfbd_btn_count_t   long_time;               /* long time when button still down, set 0 will disable long time and repeat time count. */
+
+    mfbd_btn_count_t   multiclick_time;         /* multi-click time when button still up, set 0 will disable multi-click time count. */
+#endif
+
+#if MFBD_USE_BTN_SCAN_PRE_FUNC
+    /* prepare function when start to scan buttons for each group. */
+    void (*btn_scan_prepare)(void);
+#endif
+
+#if MFBD_USE_BTN_SCAN_AFTER_FUNC
+    /* function after scanning buttons for each group. */
+    void (*btn_scan_after)(void);
+#endif
+
+} mfbd_group_t;
+
+extern void mfbd_group_scan(const mfbd_group_t *_pbtn_group);
 
 #endif
