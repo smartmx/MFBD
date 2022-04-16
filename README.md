@@ -171,9 +171,9 @@ typedef struct _mfbd_group_struct
 
 MFBD提供了三种按键处理，之所以提供三种按键处理，是为了开发中可以根据不同项目中不同按键的不同情况，自由的减少RAM的占用。  
 
-1.**tiny button**：只支持Button单击的操作，不支持按键其他操作，在普通的场景中应用广泛。  
-2.**normal button**：normal button支持Button单击、长按的操作，不支持多次连击操作。normal button是很类似于电脑按键处理的，只是多了一个长按单次触发事件（可以通过将btn_long_code设置为0，来禁用长按单次触发事件）。  
-3.**multi-function button**：multi-function button支持单击、长按、多次连击的操作。  
+1. **tiny button**：只支持Button单击的操作，不支持按键其他操作，在普通的场景中应用广泛。  
+2. **normal button**：normal button支持Button单击、长按的操作，不支持多次连击操作。normal button是很类似于电脑按键处理的，只是多了一个长按单次触发事件（可以通过将btn_long_code设置为0，来禁用长按单次触发事件）。  
+3. **multi-function button**：multi-function button支持单击、长按、多次连击的操作。  
 三种按键的结构体中同名的成员功能是基本相同的。  
 
 **按键信息结构体成员介绍：**
@@ -257,7 +257,7 @@ MFBD_MBTN_DEFINE(test_mbtn, 4, 3, 30, 150, 75, 3, 0x1501, 0x1500, 0, 0x1511, 0x1
 示例中：按键按下低电平，按键弹起高电平  
 按键上报函数和读取函数统一如下  
 
-### group中读取按键的接口函数
+### 按键组GROUP中读取按键的接口函数
 
 ```c
 unsigned char bsp_btn_check(mfbd_btn_index_t btn_index)
@@ -295,7 +295,7 @@ unsigned char bsp_btn_check(mfbd_btn_index_t btn_index)
 }
 ```
 
-### group中上报按键的接口函数
+### 按键组GROUP中上报按键的接口函数
 
 ```c
 void bsp_btn_value_report(mfbd_btn_code_t btn_value)
@@ -304,9 +304,9 @@ void bsp_btn_value_report(mfbd_btn_code_t btn_value)
 }
 ```
 
-### group定义示例
+### 按键组GROUP定义示例
 
-group需要将组内的tbtn、nbtn、mbtn分别组成数组，然后将数组头指针赋值到group中
+按键组GROUP需要将组内的tbtn、nbtn、mbtn分别组成数组，然后将数组头指针赋值到结构体中
 
 ```c
 MFBD_TBTN_ARRAYLIST(test_tbtn_list, &test_tbtn);
