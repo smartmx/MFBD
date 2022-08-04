@@ -8,6 +8,7 @@
  * 2022-02-22     smartmx      the first version
  * 2022-03-15     smartmx      each mbtn has it's own max multi-click times
  * 2022-04-16     smartmx      drop list definitions, use array, each group has all btn types.
+ * 2022-08-05     smartmx      add reset params function.
  *
  */
 
@@ -313,5 +314,7 @@ typedef struct _mfbd_group_struct
 } mfbd_group_t;
 
 extern void mfbd_group_scan(const mfbd_group_t *_pbtn_group);
+
+extern void mfbd_group_reset(const mfbd_group_t *_pbtn_group);
 
 #endif

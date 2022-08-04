@@ -333,6 +333,22 @@ const mfbd_group_t test_btn_group =
 };
 ```
 
+### 按键检测函数调用
+
+在其他配置都已完成后，只需定时调用检测函数即可完成对按键组的检测并上报兼职。
+
+```c
+extern void mfbd_group_scan(const mfbd_group_t *_pbtn_group);
+```
+
+### 停止按键检测
+
+在某些场景下可能需要临时停止按键检测，可以调用下面的函数复位按键组内所有的信息。
+
+```c
+extern void mfbd_group_reset(const mfbd_group_t *_pbtn_group);
+```
+
 ## 移植使用示例工程
 
 MFBD提供了下面的测试例程，如果你使用其他开发板和其他RTOS，可以参考例程移植即可。
