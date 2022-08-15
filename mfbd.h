@@ -289,16 +289,27 @@ typedef struct _mfbd_group_struct
     mfbd_mbtn_t **mbtns;
 #endif
 
-
+/* if set MFBD_PARAMS_SAME_IN_GROUP to 1, all btns in group has same params. */
 #if MFBD_PARAMS_SAME_IN_GROUP
-    /* if set MFBD_PARAMS_SAME_IN_GROUP to 1, all btns in group has same params. */
+
+#if MFBD_USE_TINY_BUTTON || MFBD_USE_NORMAL_BUTTON || MFBD_USE_MULTIFUCNTION_BUTTON
     mfbd_btn_count_t   filter_time;             /* filter time when button state changed, please do not use 0. */
+#endif /*  MFBD_USE_TINY_BUTTON || MFBD_USE_NORMAL_BUTTON || MFBD_USE_MULTIFUCNTION_BUTTON */
+
+#if MFBD_USE_NORMAL_BUTTON || MFBD_USE_MULTIFUCNTION_BUTTON
 
     mfbd_btn_count_t   repeat_time;             /* repeat time when button still down for over long_time, set 0 will disable repeat time count. */
 
     mfbd_btn_count_t   long_time;               /* long time when button still down, set 0 will disable long time and repeat time count. */
 
+#endif /* MFBD_USE_NORMAL_BUTTON || MFBD_USE_MULTIFUCNTION_BUTTON */
+
+#if MFBD_USE_MULTIFUCNTION_BUTTON
+
     mfbd_btn_count_t   multiclick_time;         /* multi-click time when button still up, set 0 will disable multi-click time count. */
+
+#endif /* MFBD_USE_MULTIFUCNTION_BUTTON */
+
 #endif
 
 #if MFBD_USE_BTN_SCAN_PRE_FUNC
