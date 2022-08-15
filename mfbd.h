@@ -9,6 +9,7 @@
  * 2022-03-15     smartmx      each mbtn has it's own max multi-click times
  * 2022-04-16     smartmx      drop list definitions, use array, each group has all btn types.
  * 2022-08-05     smartmx      add reset params function.
+ * 2022-08-15     smartmx      fix bugs.
  *
  */
 
