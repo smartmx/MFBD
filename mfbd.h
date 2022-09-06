@@ -10,6 +10,7 @@
  * 2022-04-16     smartmx      drop list definitions, use array, each group has all btn types.
  * 2022-08-05     smartmx      add reset params function.
  * 2022-08-15     smartmx      fix bugs.
+ * 2022-09-07     smartmx      add default define apis.
  *
  */
 
@@ -63,6 +64,18 @@ mfbd_tbtn_t NAME = {                                                    \
         0,                                                              \
 }
 
+#define MFBD_TBTN_DEFAULT_DEFINE(NAME, BTN_INDEX)                       \
+static const mfbd_tbtn_info_t NAME##_info = {                           \
+        NAME##_DOWN_CODE,                                               \
+        NAME##_UP_CODE,                                                 \
+        BTN_INDEX,                                                      \
+};                                                                      \
+mfbd_tbtn_t NAME = {                                                    \
+        &NAME##_info,                                                   \
+        0,                                                              \
+        0,                                                              \
+}
+
 #else
 
 #define MFBD_TBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, BTN_DOWN_CODE, BTN_UP_CODE)    \
@@ -76,6 +89,19 @@ mfbd_tbtn_t NAME = {                                                            
         &NAME##_info,                                                                 \
         0,                                                                            \
         0,                                                                            \
+}
+
+#define MFBD_TBTN_DEFAULT_DEFINE(NAME, BTN_INDEX, FILTER_TIME)          \
+static const mfbd_tbtn_info_t NAME##_info = {                           \
+        NAME##_DOWN_CODE,                                               \
+        NAME##_UP_CODE,                                                 \
+        FILTER_TIME,                                                    \
+        BTN_INDEX,                                                      \
+};                                                                      \
+mfbd_tbtn_t NAME = {                                                    \
+        &NAME##_info,                                                   \
+        0,                                                              \
+        0,                                                              \
 }
 
 #endif /*MFBD_PARAMS_SAME_IN_GROUP*/
@@ -139,6 +165,19 @@ mfbd_nbtn_t NAME = {                                                            
         0,                                                                              \
 }
 
+#define MFBD_NBTN_DEFAULT_DEFINE(NAME, BTN_INDEX)                                                   \
+static const mfbd_nbtn_info_t NAME##_info = {                                                       \
+        NAME##_DOWN_CODE,                                                                           \
+        NAME##_UP_CODE,                                                                             \
+        NAME##_LONG_CODE,                                                                           \
+        BTN_INDEX,                                                                                  \
+};                                                                                                  \
+mfbd_nbtn_t NAME = {                                                                                \
+        &NAME##_info,                                                                               \
+        0,                                                                                          \
+        0,                                                                                          \
+}
+
 #else
 
 #define MFBD_NBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE)   \
@@ -157,6 +196,22 @@ mfbd_nbtn_t NAME = {                                                            
         0,                                                                                                                  \
         0,                                                                                                                  \
         0,                                                                                                                  \
+}
+
+#define MFBD_NBTN_DEFAULT_DEFINE(NAME, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME)              \
+static const mfbd_nbtn_info_t NAME##_info = {                                                       \
+        FILTER_TIME,                                                                                \
+        REPEAT_TIME,                                                                                \
+        LONG_TIME,                                                                                  \
+        NAME##_DOWN_CODE,                                                                           \
+        NAME##_UP_CODE,                                                                             \
+        NAME##_LONG_CODE,                                                                           \
+        BTN_INDEX,                                                                                  \
+};                                                                                                  \
+mfbd_nbtn_t NAME = {                                                                                \
+        &NAME##_info,                                                                               \
+        0,                                                                                          \
+        0,                                                                                          \
 }
 
 #endif /*MFBD_PARAMS_SAME_IN_GROUP*/
@@ -233,6 +288,24 @@ mfbd_mbtn_t NAME = {                                                            
         0,                                                                                                        \
 }
 
+#define MFBD_MBTN_DEFAULT_DEFINE(NAME, BTN_INDEX, MAX_MULTICLICK_STATE)                             \
+static const mfbd_mbtn_info_t NAME##_info = {                                                       \
+        NAME##_DOWN_CODES,                                                                          \
+        NAME##_UP_CODE,                                                                             \
+        NAME##_LONG_CODE,                                                                           \
+        BTN_INDEX,                                                                                  \
+        MAX_MULTICLICK_STATE,                                                                       \
+};                                                                                                  \
+mfbd_mbtn_t NAME = {                                                                                \
+        &NAME##_info,                                                                               \
+        0,                                                                                          \
+        0,                                                                                          \
+        0,                                                                                          \
+        0,                                                                                          \
+        0,                                                                                          \
+        0,                                                                                          \
+}
+
 #else
 
 #define MFBD_MBTN_DEFINE(NAME, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, MULTICLICK_TIME, MAX_MULTICLICK_STATE, BTN_DOWN_CODE, BTN_UP_CODE, BTN_LONG_CODE, ...)   \
@@ -256,6 +329,28 @@ mfbd_mbtn_t NAME = {                                                            
         0,                                                                                                                                                              \
         0,                                                                                                                                                              \
         0,                                                                                                                                                              \
+}
+
+#define MFBD_MBTN_DEFAULT_DEFINE(NAME, BTN_INDEX, FILTER_TIME, REPEAT_TIME, LONG_TIME, MULTICLICK_TIME, MAX_MULTICLICK_STATE)               \
+static const mfbd_mbtn_info_t NAME##_info = {                                                                                               \
+        FILTER_TIME,                                                                                                                        \
+        REPEAT_TIME,                                                                                                                        \
+        LONG_TIME,                                                                                                                          \
+        MULTICLICK_TIME,                                                                                                                    \
+        NAME##_DOWN_CODES,                                                                                                                  \
+        NAME##_UP_CODE,                                                                                                                     \
+        NAME##_LONG_CODE,                                                                                                                   \
+        BTN_INDEX,                                                                                                                          \
+        MAX_MULTICLICK_STATE,                                                                                                               \
+};                                                                                                                                          \
+mfbd_mbtn_t NAME = {                                                                                                                        \
+        &NAME##_info,                                                                                                                       \
+        0,                                                                                                                                  \
+        0,                                                                                                                                  \
+        0,                                                                                                                                  \
+        0,                                                                                                                                  \
+        0,                                                                                                                                  \
+        0,                                                                                                                                  \
 }
 
 #endif /*MFBD_PARAMS_SAME_IN_GROUP*/
