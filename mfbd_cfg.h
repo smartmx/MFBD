@@ -22,30 +22,47 @@
     #define NULL 0
 #endif
 
+#ifndef mfbd_btn_code_t
 /* mfbd_btn_code_t is the type of value of every button event. */
-typedef uint16_t    mfbd_btn_code_t;
+#define mfbd_btn_code_t                     uint16_t;
+#endif
 
+#ifndef mfbd_btn_count_t
 /* mfbd_btn_count_t is the type of count time for button scanning. */
-typedef uint16_t    mfbd_btn_count_t;
+#define mfbd_btn_count_t                    uint16_t
+#endif
 
+#ifndef mfbd_btn_index_t
 /* mfbd_btn_index_t is the type of params when calling is_btn_down_func in mfbd_group_t. */
-typedef uint32_t    mfbd_btn_index_t;
+#define mfbd_btn_index_t                    uint32_t
+#endif
 
+#ifndef MFBD_USE_TINY_BUTTON
 /* set MFBD_USE_TINY_BUTTON to 1 will enable tiny button functions. */
 #define MFBD_USE_TINY_BUTTON                1
+#endif
 
+#ifndef MFBD_USE_NORMAL_BUTTON
 /* set MFBD_USE_NORMAL_BUTTON to 1 will enable normal button functions. */
 #define MFBD_USE_NORMAL_BUTTON              1
+#endif
 
+#ifndef MFBD_USE_MULTIFUCNTION_BUTTON
 /* set MFBD_USE_MULTIFUCNTION_BUTTON to 1 will enable multifunction button functions. */
 #define MFBD_USE_MULTIFUCNTION_BUTTON       1
+#endif
 
+#ifndef MFBD_USE_BTN_SCAN_PRE_FUNC
 /* set MFBD_USE_BTN_SCAN_PRE_FUNC to 1 will enable running prepare_function before run button detection function */
 #define MFBD_USE_BTN_SCAN_PRE_FUNC          0
+#endif
 
+#ifndef MFBD_USE_BTN_SCAN_AFTER_FUNC
 /* set MFBD_USE_BTN_SCAN_AFTER_FUNC to 1 will enable running after_function after run button detection function */
 #define MFBD_USE_BTN_SCAN_AFTER_FUNC        0
+#endif
 
+#ifndef MFBD_PARAMS_SAME_IN_GROUP
 /*
  * @Note:
  * set MFBD_PARAMS_SAME_IN_GROUP to 1 means all key's filter_time/repeat_time/long_time/multiclick_time are same,
@@ -53,5 +70,6 @@ typedef uint32_t    mfbd_btn_index_t;
  * if MFBD_PARAMS_SAME_IN_GROUP is 1, btns cannot disable repeat count alone.
  */
 #define MFBD_PARAMS_SAME_IN_GROUP           0
+#endif
 
 #endif /* _MFBD_CFG_H_ */
