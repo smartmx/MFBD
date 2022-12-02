@@ -24,7 +24,7 @@
 
 #ifndef mfbd_btn_code_t
 /* mfbd_btn_code_t is the type of value of every button event. */
-#define mfbd_btn_code_t                     uint16_t;
+#define mfbd_btn_code_t                     uint16_t
 #endif
 
 #ifndef mfbd_btn_count_t
