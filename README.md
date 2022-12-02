@@ -261,6 +261,24 @@ MFBD_MBTN_DEFINE(test_mbtn, 4, 3, 30, 150, 75, 3, 0x1501, 0x1500, 0, 0x1511, 0x1
 #endif /*MFBD_BTN_PARAMS_SAME*/
 ```
 
+### 默认定义
+
+为了方便定义，还引入了默认定义宏
+
+```c
+MFBD_TBTN_DEFAULT_DEFINE(NAME, ...)
+MFBD_NBTN_DEFAULT_DEFINE(NAME, ...)
+MFBD_MBTN_DEFAULT_DEFINE(NAME, ...)
+```
+
+在使用DEFAULT_DEFINE时，会自动使用按键名称为扩展的枚举或宏变量值。
+
+```MFBD_TBTN_DEFAULT_DEFINE(HI, ...);```，将会默认使用```HI_DOWN_CODE```和```HI_UP_CODE```作为按键值。所以程序中需要准备好该两个名称的按键值枚举变量或宏定义。
+
+```MFBD_NBTN_DEFAULT_DEFINE(HI, ...);```，将会默认使用```HI_DOWN_CODE```、```HI_UP_CODE```和```HI_LONG_CODE```作为按键值。所以程序中需要准备好该三个名称的按键值枚举变量或宏定义。
+
+```MFBD_MBTN_DEFAULT_DEFINE(HI, ...);```，将会默认使用```HI_UP_CODE```和```HI_LONG_CODE```作为按键值。所以程序中需要准备好该两个名称的按键值枚举变量或宏定义。另外MBTN需要提供一个变量名为```HI_DOWN_CODES```的按键值数组，作为多次连击的按键值。
+
 ## MFBD 使用示例
 
 这里使用上方MFBD定义示例中宏定义的方式定义按键进行操作  
