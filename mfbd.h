@@ -11,6 +11,7 @@
  * 2022-08-05     smartmx      add reset params function.
  * 2022-08-15     smartmx      fix bugs.
  * 2022-09-07     smartmx      add default define apis.
+ * 2023-03-15     smartmx      add state declaration.
  *
  */
 
@@ -19,7 +20,12 @@
 
 #include "mfbd_cfg.h"
 
-
+typedef enum
+{
+    MFBD_BTN_STATE_UP = 0,
+    MFBD_BTN_STATE_DOWN,
+    MFBD_BTN_STATE_LONG,
+} MFBD_BTN_STATE_t;
 
 /* tiny button definitions, tiny button functions only support down and up event. */
 #if MFBD_PARAMS_SAME_IN_GROUP

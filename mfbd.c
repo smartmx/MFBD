@@ -9,6 +9,7 @@
  * 2022-03-15     smartmx      each mbtn has it's own max multi-click times
  * 2022-04-16     smartmx      drop list definitions, use arraylist, each group has all btn types.
  * 2022-08-05     smartmx      add reset params function.
+ * 2023-03-15     smartmx      add state declaration.
  *
  */
 
@@ -67,9 +68,9 @@ void mfbd_tbtn_scan(const mfbd_group_t *_pbtn_group)
             else
             {
                 /* it means the button is down for over filter_time. */
-                if (_pbtn->state == 0)
+                if (_pbtn->state == MFBD_BTN_STATE_UP)
                 {
-                    _pbtn->state = 1;
+                    _pbtn->state = MFBD_BTN_STATE_DOWN;
                     if (_pbtn->btn_info->btn_down_code > 0)
                     {
                         _pbtn_group->btn_value_report(_pbtn->btn_info->btn_down_code);
@@ -89,9 +90,9 @@ void mfbd_tbtn_scan(const mfbd_group_t *_pbtn_group)
             }
             else
             {
-                if (_pbtn->state == 1)
+                if (_pbtn->state != MFBD_BTN_STATE_UP)
                 {
-                    _pbtn->state = 0;
+                    _pbtn->state = MFBD_BTN_STATE_UP;
                     if (_pbtn->btn_info->btn_up_code > 0)
                     {
                         _pbtn_group->btn_value_report(_pbtn->btn_info->btn_up_code);
@@ -118,7 +119,7 @@ void mfbd_tbtn_reset(const mfbd_group_t *_pbtn_group)
     while (_pbtn != NULL)
     {
         _pbtn->filter_count = 0;
-        _pbtn->state = 0;
+        _pbtn->state = MFBD_BTN_STATE_UP;
         _ppbtn++;
         _pbtn = *_ppbtn;
     }
@@ -156,9 +157,9 @@ void mfbd_nbtn_scan(const mfbd_group_t *_pbtn_group)
             else
             {
                 /* it means the button is down for over filter_time. */
-                if (_pbtn->state == 0)
+                if (_pbtn->state == MFBD_BTN_STATE_UP)
                 {
-                    _pbtn->state = 1;
+                    _pbtn->state = MFBD_BTN_STATE_DOWN;
                     /* clear long_count. */
                     _pbtn->long_count = 0;
                     if (_pbtn->btn_info->btn_down_code > 0)
@@ -177,6 +178,7 @@ void mfbd_nbtn_scan(const mfbd_group_t *_pbtn_group)
                             if (_pbtn->long_count >= (MFBD_LONG_TIME_IN_FUC))
                             {
                                 /* it means the button is down for over long_time. */
+                                _pbtn->state = MFBD_BTN_STATE_LONG;
                                 _pbtn->repeat_count = 0; /* long event has happened, clear repeat_count. */
                                 _pbtn_group->btn_value_report(_pbtn->btn_info->btn_long_code);
                             }
@@ -210,9 +212,9 @@ void mfbd_nbtn_scan(const mfbd_group_t *_pbtn_group)
             }
             else
             {
-                if (_pbtn->state == 1)
+                if (_pbtn->state != MFBD_BTN_STATE_UP)
                 {
-                    _pbtn->state = 0;
+                    _pbtn->state = MFBD_BTN_STATE_UP;
                     if (_pbtn->btn_info->btn_up_code > 0)
                     {
                         _pbtn_group->btn_value_report(_pbtn->btn_info->btn_up_code);
@@ -241,7 +243,7 @@ void mfbd_nbtn_reset(const mfbd_group_t *_pbtn_group)
         _pbtn->filter_count = 0;
         _pbtn->long_count = 0;
         _pbtn->repeat_count = 0;
-        _pbtn->state = 0;
+        _pbtn->state = MFBD_BTN_STATE_UP;
         _ppbtn++;
         _pbtn = *_ppbtn;
     }
@@ -278,9 +280,9 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group)
             else
             {
                 /* it means the button is down for over filter_time. */
-                if (_pbtn->state == 0)
+                if (_pbtn->state == MFBD_BTN_STATE_UP)
                 {
-                    _pbtn->state = 1;
+                    _pbtn->state = MFBD_BTN_STATE_DOWN;
                     /* clear long_count. */
                     _pbtn->long_count = 0;
                     if (_pbtn->btn_info->btn_down_code[_pbtn->multiclick_state] > 0)
@@ -301,6 +303,7 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group)
                                 if (_pbtn->long_count >= (MFBD_LONG_TIME_IN_FUC))
                                 {
                                     /* it means the button is down for over long_time. */
+                                    _pbtn->state = MFBD_BTN_STATE_LONG;
                                     _pbtn->repeat_count = 0; /* long event has happened, clear repeat_count. */
                                     _pbtn_group->btn_value_report(_pbtn->btn_info->btn_long_code);
                                 }
@@ -335,9 +338,9 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group)
             }
             else
             {
-                if (_pbtn->state == 1)
+                if (_pbtn->state != MFBD_BTN_STATE_UP)
                 {
-                    _pbtn->state = 0;
+                    _pbtn->state = MFBD_BTN_STATE_UP;
                     if (_pbtn->btn_info->btn_up_code > 0)
                     {
                         _pbtn_group->btn_value_report(_pbtn->btn_info->btn_up_code);
@@ -393,7 +396,7 @@ void mfbd_mbtn_reset(const mfbd_group_t *_pbtn_group)
         _pbtn->multiclick_count = 0;
         _pbtn->multiclick_state = 0;
         _pbtn->repeat_count = 0;
-        _pbtn->state = 0;
+        _pbtn->state = MFBD_BTN_STATE_UP;
         _ppbtn++;
         _pbtn = *_ppbtn;
     }
