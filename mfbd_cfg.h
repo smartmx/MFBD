@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, smartmx <smartmx@qq.com>
+ * Copyright (c) 2022-2023, smartmx <smartmx@qq.com>
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,6 +10,7 @@
  * 2022-04-16     smartmx      drop list definitions, use arraylist, each group has all btn types.
  * 2022-08-05     smartmx      add reset params function.
  * 2022-12-04     smartmx      change some definitions, add rtconfig.h.
+ * 2023-03-25     smartmx      add some comment.
  *
  */
 
@@ -18,6 +19,7 @@
 
 /* add type definitions of your chips in your compiler environment. */
 #include "stdint.h"
+/* if you are not use mfbd in rt-thread, delete #include "rtconfig.h" below */
 #include "rtconfig.h"
 
 #ifndef NULL
@@ -38,6 +40,7 @@
         typedef uint16_t mfbd_btn_code_t;
     #endif
 #else
+    /* if you are not use mfbd in rt-thread, you can change this instead. */
     typedef uint16_t mfbd_btn_code_t;
 #endif
 
@@ -55,6 +58,7 @@
         typedef uint16_t mfbd_btn_count_t;
     #endif
 #else
+    /* if you are not use mfbd in rt-thread, you can change this instead. */
     typedef uint16_t mfbd_btn_count_t;
 #endif
 
@@ -74,6 +78,7 @@
         typedef uint32_t mfbd_btn_index_t;
     #endif
 #else
+    /* if you are not use mfbd in rt-thread, you can change this instead. */
     typedef uint32_t mfbd_btn_index_t;
 #endif
 
@@ -81,6 +86,7 @@
 #ifdef PKG_MFBD_USE_TINY_BUTTON
     #define MFBD_USE_TINY_BUTTON                1
 #else
+    /* if you are not use mfbd in rt-thread, you can change this instead. */
     #define MFBD_USE_TINY_BUTTON                0
 #endif
 
@@ -88,6 +94,7 @@
 #ifdef PKG_MFBD_USE_NORMAL_BUTTON
     #define MFBD_USE_NORMAL_BUTTON              1
 #else
+    /* if you are not use mfbd in rt-thread, you can change this instead. */
     #define MFBD_USE_NORMAL_BUTTON              0
 #endif
 
@@ -95,6 +102,7 @@
 #ifdef PKG_MFBD_USE_MULTIFUCNTION_BUTTON
     #define MFBD_USE_MULTIFUCNTION_BUTTON       1
 #else
+    /* if you are not use mfbd in rt-thread, you can change this instead. */
     #define MFBD_USE_MULTIFUCNTION_BUTTON       0
 #endif
 
@@ -102,6 +110,7 @@
 #ifdef PKG_MFBD_USE_BTN_SCAN_PRE_FUNC
     #define MFBD_USE_BTN_SCAN_PRE_FUNC          1
 #else
+    /* if you are not use mfbd in rt-thread, you can change this instead. */
     #define MFBD_USE_BTN_SCAN_PRE_FUNC          0
 #endif
 
@@ -109,6 +118,7 @@
 #ifdef PKG_MFBD_USE_BTN_SCAN_AFTER_FUNC
     #define MFBD_USE_BTN_SCAN_AFTER_FUNC        1
 #else
+    /* if you are not use mfbd in rt-thread, you can change this instead. */
     #define MFBD_USE_BTN_SCAN_AFTER_FUNC        0
 #endif
 
@@ -121,6 +131,7 @@
 #ifdef PKG_MFBD_PARAMS_SAME_IN_GROUP
     #define MFBD_PARAMS_SAME_IN_GROUP           1
 #else
+    /* if you are not use mfbd in rt-thread, you can change this instead. */
     #define MFBD_PARAMS_SAME_IN_GROUP           0
 #endif
 
