@@ -137,31 +137,31 @@ unsigned char bsp_btn_check(mfbd_btn_index_t btn_index)
     case 1:
         if (rt_pin_read(BTN_KEY0) == 0)
         {
-            return 1;
+            return MFBD_BTN_STATE_DOWN;
         }
         break;
     case 2:
         if (rt_pin_read(BTN_KEY1) == 0)
         {
-            return 1;
+            return MFBD_BTN_STATE_DOWN;
         }
         break;
     case 3:
         if (rt_pin_read(BTN_KEY2) == 0)
         {
-            return 1;
+            return MFBD_BTN_STATE_DOWN;
         }
         break;
     case 4:
         if (rt_pin_read(BTN_WK_UP) == 1)
         {
-            return 1;
+            return MFBD_BTN_STATE_DOWN;
         }
         break;
     default:
         break;
     }
-    return 0;
+    return MFBD_BTN_STATE_UP;
 }
 
 void bsp_btn_value_report(mfbd_btn_code_t btn_value)

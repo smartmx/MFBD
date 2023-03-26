@@ -55,7 +55,7 @@ void mfbd_tbtn_scan(const mfbd_group_t *_pbtn_group)
 
     while (_pbtn != NULL)
     {
-        if (_pbtn_group->is_btn_down_func(_pbtn->btn_info->btn_index) != 0)
+        if (_pbtn_group->is_btn_down_func(_pbtn->btn_info->btn_index) != MFBD_BTN_STATE_UP)
         {
             if (_pbtn->filter_count < (MFBD_FILTER_TIME_IN_FUC))
             {
@@ -144,7 +144,7 @@ void mfbd_nbtn_scan(const mfbd_group_t *_pbtn_group)
 
     while (_pbtn != NULL)
     {
-        if (_pbtn_group->is_btn_down_func(_pbtn->btn_info->btn_index) != 0)
+        if (_pbtn_group->is_btn_down_func(_pbtn->btn_info->btn_index) != MFBD_BTN_STATE_UP)
         {
             if (_pbtn->filter_count < (MFBD_FILTER_TIME_IN_FUC))
             {
@@ -267,7 +267,7 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group)
     mfbd_mbtn_t *_pbtn = *_ppbtn;
     while (_pbtn != NULL)
     {
-        if (_pbtn_group->is_btn_down_func(_pbtn->btn_info->btn_index) != 0)
+        if (_pbtn_group->is_btn_down_func(_pbtn->btn_info->btn_index) != MFBD_BTN_STATE_UP)
         {
             if (_pbtn->filter_count < (MFBD_FILTER_TIME_IN_FUC))
             {
