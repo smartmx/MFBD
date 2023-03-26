@@ -287,6 +287,8 @@ MFBD_MBTN_DEFAULT_DEFINE(NAME, ...);
 
 ### 按键组GROUP中读取按键的接口函数
 
+在读取按键状态的函数中，如果按键按下了，应当返回`MFBD_BTN_STATE_DOWN`，否则返回`MFBD_BTN_STATE_UP`。
+
 ```c
 unsigned char bsp_btn_check(mfbd_btn_index_t btn_index)
 {
@@ -295,31 +297,31 @@ unsigned char bsp_btn_check(mfbd_btn_index_t btn_index)
     case 1:
         if (rt_pin_read(BTN_KEY0) == 0)
         {
-            return 1;
+            return MFBD_BTN_STATE_DOWN;
         }
         break;
     case 2:
         if (rt_pin_read(BTN_KEY1) == 0)
         {
-            return 1;
+            return MFBD_BTN_STATE_DOWN;
         }
         break;
     case 3:
         if (rt_pin_read(BTN_KEY2) == 0)
         {
-            return 1;
+            return MFBD_BTN_STATE_DOWN;
         }
         break;
     case 4:
         if (rt_pin_read(BTN_WK_UP) == 1)
         {
-            return 1;
+            return MFBD_BTN_STATE_DOWN;
         }
         break;
     default:
         break;
     }
-    return 0;
+    return MFBD_BTN_STATE_UP;
 }
 ```
 
