@@ -23,10 +23,6 @@ typedef enum
     MFBD_BTN_STATE_LONG,
 } MFBD_BTN_STATE_t;
 
-//#define __CC_ARM
-//#define __IAR_SYSTEMS_ICC__
-//#define __GNUC__
-
 #if defined(__CC_ARM) || defined(__CLANG_ARM)           /* ARM Compiler */
 #define __MFBD_SECTION(x)                               __attribute__((section(x)))
 #define MFBD_USED                                       __attribute__((used))
@@ -652,6 +648,7 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
 #define MFBD_GROUP_SCAN_AFTER(GROUP)              do{} while(0)
 #endif  /* MFBD_USE_BTN_SCAN_AFTER_FUNC */
 
+/* this in a example for how to scan or reset the mfbd group, if some group has not all btn types, you should write code by youself. */
 #define MFBD_GROUP_SCAN(GROUP)                      \
     do                                              \
     {                                               \

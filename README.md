@@ -9,6 +9,16 @@ MFBD尽可能的减少了RAM的使用，将能保存在Flash中的参数都保�
 MFBD通过类似电脑对按键的处理方式，将每个按键的不同操作分配不同的键值。  
 同时mfbd采用了回调函数的机制，通过回调函数将键值上报到上层应用程序，当然用户也可以直接在回调函数中进行操作。  
 
+## MFBD版本
+
+MFBD有传统定义方式和利用编译器特性的段定义（Section-Definition）方式。  
+使用段定义方式将会极大程度减少代码编写量，但是会受限于编译器，目前仅支持`Keil`，`IAR`，`GCC`。
+通过配置`mfbd_cfg.h`中的`MFBD_USE_SECTION_DEFINITION`为`0`或`非0`，为`非0`时即可启用段定义。即使用`mfbd_sd.c`和`mfbd_sd.h`中的API。
+
+普通定义请看[如下章节](#mfbd-button定义)
+
+段定义请看[如下章节](#mfbd段定义)
+
 ## MFBD移植和配置
 
 MFBD移植只需将文件添加到工程目录即可，配置项都已经汇总到mfbd_cfg.h中：
@@ -387,6 +397,15 @@ extern void mfbd_group_scan(const mfbd_group_t *_pbtn_group);
 
 ```c
 extern void mfbd_group_reset(const mfbd_group_t *_pbtn_group);
+```
+
+## MFBD段定义
+
+段定义（Section-Definition）
+
+### 段定义调用按键检测
+
+```c
 ```
 
 ## 移植使用示例工程
