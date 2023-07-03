@@ -401,12 +401,51 @@ extern void mfbd_group_reset(const mfbd_group_t *_pbtn_group);
 
 ## MFBD段定义
 
-段定义（Section-Definition）
+段定义（Section-Definition）是程序编译期间会将不同的程序内容放到不同的程序段中，再通过链接器链接为固件。
+
+### GROUP命名和其他对应名称关系
+
+### MDK和IAR编译器使用方法
+
+MDK和IAR中都在软件内部进行更改了代码编译后的链接操作，可以很方便的使用，无需修改工程文件。
+
+### GCC使用方法
 
 ### 段定义调用按键检测
 
+由于使用了段定义，所以程序无法判断一个组是否有所有的按键种类。所以可能会出错，此时需要通过自行调整检测宏来进行按键检测。
+
+默认的按键扫描宏如下：
+
 ```c
+#define MFBD_GROUP_SCAN(GROUP)                      \
+    do                                              \
+    {                                               \
+        MFBD_GROUP_SCAN_PREPARE(GROUP);             \
+        MFBD_GROUP_SCAN_TBTN(GROUP);                \
+        MFBD_GROUP_SCAN_NBTN(GROUP);                \
+        MFBD_GROUP_SCAN_MBTN(GROUP);                \
+        MFBD_GROUP_SCAN_AFTER(GROUP);               \
+    } while (0)
 ```
+
+如果在`mfbd_cfg.h`中使能了`mbtn`，但是这个组又没有用到`mbtn`，那么就会出错，因为程序中没有`mbtn`对应的这个段。这时，自行将上述宏复制到程序中：
+
+```c
+    do                                              
+    {                                               
+        MFBD_GROUP_SCAN_PREPARE(GROUP);             
+        MFBD_GROUP_SCAN_TBTN(GROUP);                
+        MFBD_GROUP_SCAN_NBTN(GROUP);             
+        MFBD_GROUP_SCAN_AFTER(GROUP);               
+    } while (0)
+```
+
+这样就可以进行正确的通过编译了。
+
+### 段定义调用按键复位
+
+和段定义调用按键检测一样，需要自行调整程序。
 
 ## 移植使用示例工程
 
