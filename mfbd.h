@@ -12,6 +12,7 @@
  * 2022-08-15     smartmx      fix bugs.
  * 2022-09-07     smartmx      add default define apis.
  * 2023-03-15     smartmx      add state declaration.
+ * 2023-07-03     smartmx      add Section Definition option.
  *
  */
 
@@ -19,6 +20,8 @@
 #define _MFBD_H_
 
 #include "mfbd_cfg.h"
+
+#if (MFBD_USE_SECTION_DEFINITION == 0)
 
 typedef enum
 {
@@ -429,5 +432,7 @@ typedef struct _mfbd_group_struct
 extern void mfbd_group_scan(const mfbd_group_t *_pbtn_group);
 
 extern void mfbd_group_reset(const mfbd_group_t *_pbtn_group);
+
+#endif  /* (MFBD_USE_SECTION_DEFINITION == 0) */
 
 #endif

@@ -10,10 +10,13 @@
  * 2022-04-16     smartmx      drop list definitions, use arraylist, each group has all btn types.
  * 2022-08-05     smartmx      add reset params function.
  * 2023-03-15     smartmx      add state declaration.
+ * 2023-07-03     smartmx      add Section Definition option.
  *
  */
 
 #include "mfbd.h"
+
+#if (MFBD_USE_SECTION_DEFINITION == 0)
 
 #if MFBD_PARAMS_SAME_IN_GROUP
 
@@ -493,3 +496,5 @@ void mfbd_group_reset(const mfbd_group_t *_pbtn_group)
 #endif
 
 }
+
+#endif  /* (MFBD_USE_SECTION_DEFINITION == 0) */

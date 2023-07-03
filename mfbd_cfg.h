@@ -11,6 +11,7 @@
  * 2022-08-05     smartmx      add reset params function.
  * 2022-12-04     smartmx      change some definitions, add rtconfig.h.
  * 2023-03-25     smartmx      add some comment.
+ * 2023-07-03     smartmx      add Section Definition option.
  *
  */
 
@@ -24,6 +25,14 @@
 
 #ifndef NULL
     #define NULL 0
+#endif
+
+/* use section definitions can simplify the code, but limited with the complier. */
+#ifdef PKG_MFBD_USE_SECTION_DEFINITION
+    #define MFBD_USE_SECTION_DEFINITION     1
+#else
+    /* if you are not use mfbd in rt-thread, you can change this instead. */
+    #define MFBD_USE_SECTION_DEFINITION     0
 #endif
 
 /* mfbd_btn_code_t is the type of value for every button event. */
