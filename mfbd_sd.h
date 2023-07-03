@@ -648,7 +648,11 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
 #define MFBD_GROUP_SCAN_AFTER(GROUP)              do{} while(0)
 #endif  /* MFBD_USE_BTN_SCAN_AFTER_FUNC */
 
-/* this in a example for how to scan or reset the mfbd group, if some group has not all btn types, you should write code by youself. */
+/*
+ * @Note:
+ * this in a example for how to scan or reset the mfbd group,
+ * if some group has not all btn types, you should write code by youself.
+ */
 #define MFBD_GROUP_SCAN(GROUP)                      \
     do                                              \
     {                                               \
