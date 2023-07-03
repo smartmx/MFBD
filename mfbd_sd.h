@@ -460,14 +460,14 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
     {                                                                                                                       \
         extern const int MFBD_SECTION_START(GROUP, tbtn);                                                                   \
         extern const int MFBD_SECTION_END(GROUP, tbtn);                                                                     \
-        mfbd_tbtn_scan(&(MFBD_GROUP_NAME(GROUP)), &(MFBD_SECTION_START(GROUP, tbtn)), &(MFBD_SECTION_END(GROUP, tbtn)));    \
+        mfbd_tbtn_scan((const mfbd_group_t *)&(MFBD_GROUP_NAME(GROUP)), (const mfbd_tbtn_info_t *)&(MFBD_SECTION_START(GROUP, tbtn)), (const mfbd_tbtn_info_t *)&(MFBD_SECTION_END(GROUP, tbtn)));    \
     } while (0)
 #define MFBD_GROUP_RESET_TBTN(GROUP)                                                                \
     do                                                                                              \
     {                                                                                               \
         extern const int MFBD_SECTION_START(GROUP, tbtn);                                           \
         extern const int MFBD_SECTION_END(GROUP, tbtn);                                             \
-        mfbd_tbtn_reset(&(MFBD_SECTION_START(GROUP, tbtn)), &(MFBD_SECTION_END(GROUP, tbtn)));      \
+        mfbd_tbtn_reset((const mfbd_tbtn_info_t *)&(MFBD_SECTION_START(GROUP, tbtn)), (const mfbd_tbtn_info_t *)&(MFBD_SECTION_END(GROUP, tbtn)));      \
     } while (0)
 #else
 #define MFBD_GROUP_SCAN_TBTN(GROUP)             do{} while(0)
@@ -480,14 +480,14 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
     {                                                                                                                       \
         extern const int MFBD_SECTION_START(GROUP, nbtn);                                                                   \
         extern const int MFBD_SECTION_END(GROUP, nbtn);                                                                     \
-        mfbd_nbtn_scan(&(MFBD_GROUP_NAME(GROUP)), &(MFBD_SECTION_START(GROUP, nbtn)), &(MFBD_SECTION_END(GROUP, nbtn)));    \
+        mfbd_nbtn_scan((const mfbd_group_t *)&(MFBD_GROUP_NAME(GROUP)), (const mfbd_nbtn_info_t *)&(MFBD_SECTION_START(GROUP, nbtn)), (const mfbd_nbtn_info_t *)&(MFBD_SECTION_END(GROUP, nbtn)));    \
     } while (0)
 #define MFBD_GROUP_RESET_NBTN(GROUP)                                                                \
     do                                                                                              \
     {                                                                                               \
         extern const int MFBD_SECTION_START(GROUP, nbtn);                                           \
         extern const int MFBD_SECTION_END(GROUP, nbtn);                                             \
-        mfbd_nbtn_reset(&(MFBD_SECTION_START(GROUP, nbtn)), &(MFBD_SECTION_END(GROUP, nbtn)));      \
+        mfbd_nbtn_reset((const mfbd_nbtn_info_t *)&(MFBD_SECTION_START(GROUP, nbtn)), (const mfbd_nbtn_info_t *)&(MFBD_SECTION_END(GROUP, nbtn)));      \
     } while (0)
 #else
 #define MFBD_GROUP_SCAN_NBTN(GROUP)             do{} while(0)
@@ -500,14 +500,14 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
     {                                                                                                                       \
         extern const int MFBD_SECTION_START(GROUP, mbtn);                                                                   \
         extern const int MFBD_SECTION_END(GROUP, mbtn);                                                                     \
-        mfbd_mbtn_scan(&(MFBD_GROUP_NAME(GROUP)), &(MFBD_SECTION_START(GROUP, mbtn)), &(MFBD_SECTION_END(GROUP, mbtn)));    \
+        mfbd_mbtn_scan((const mfbd_group_t *)&(MFBD_GROUP_NAME(GROUP)), (const mfbd_mbtn_info_t *)&(MFBD_SECTION_START(GROUP, mbtn)), (const mfbd_mbtn_info_t *)&(MFBD_SECTION_END(GROUP, mbtn)));    \
     } while (0)
 #define MFBD_GROUP_RESET_MBTN(GROUP)                                                                \
     do                                                                                              \
     {                                                                                               \
         extern const int MFBD_SECTION_START(GROUP, mbtn);                                           \
         extern const int MFBD_SECTION_END(GROUP, mbtn);                                             \
-        mfbd_mbtn_reset(&(MFBD_SECTION_START(GROUP, mbtn)), &(MFBD_SECTION_END(GROUP, mbtn)));      \
+        mfbd_mbtn_reset((const mfbd_mbtn_info_t *)&(MFBD_SECTION_START(GROUP, mbtn)), (const mfbd_mbtn_info_t *)&(MFBD_SECTION_END(GROUP, mbtn)));      \
     } while (0)
 #else
 #define MFBD_GROUP_SCAN_MBTN(GROUP)             do{} while(0)
@@ -520,7 +520,12 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
 #define MFBD_GROUP_SCAN_TBTN(GROUP)                                                                                 \
     do                                                                                                              \
     {                                                                                                               \
-        mfbd_tbtn_scan(&(MFBD_GROUP_NAME(GROUP)), MFBD_SECTION_START(GROUP, tbtn), MFBD_SECTION_END(GROUP, tbtn));  \
+        mfbd_tbtn_scan((const mfbd_group_t *)&(MFBD_GROUP_NAME(GROUP)), (const mfbd_tbtn_info_t *)MFBD_SECTION_START(GROUP, tbtn), (const mfbd_tbtn_info_t *)MFBD_SECTION_END(GROUP, tbtn));  \
+    } while (0)
+#define MFBD_GROUP_RESET_TBTN(GROUP)                                                        \
+    do                                                                                      \
+    {                                                                                       \
+        mfbd_tbtn_reset((const mfbd_tbtn_info_t *)MFBD_SECTION_START(GROUP, nbtn), (const mfbd_tbtn_info_t *)MFBD_SECTION_END(GROUP, nbtn));    \
     } while (0)
 #else
 #define MFBD_GROUP_SCAN_TBTN(GROUP)             do{} while(0)
@@ -529,12 +534,12 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
 #define MFBD_GROUP_SCAN_NBTN(GROUP)                                                                                 \
     do                                                                                                              \
     {                                                                                                               \
-        mfbd_nbtn_scan(&(MFBD_GROUP_NAME(GROUP)), MFBD_SECTION_START(GROUP, nbtn), MFBD_SECTION_END(GROUP, nbtn));  \
+        mfbd_nbtn_scan((const mfbd_group_t *)&(MFBD_GROUP_NAME(GROUP)), (const mfbd_nbtn_info_t *)MFBD_SECTION_START(GROUP, nbtn), (const mfbd_nbtn_info_t *)MFBD_SECTION_END(GROUP, nbtn));  \
     } while (0)
 #define MFBD_GROUP_RESET_NBTN(GROUP)                                                        \
     do                                                                                      \
     {                                                                                       \
-        mfbd_nbtn_reset(MFBD_SECTION_START(GROUP, nbtn), MFBD_SECTION_END(GROUP, nbtn));    \
+        mfbd_nbtn_reset((const mfbd_nbtn_info_t *)MFBD_SECTION_START(GROUP, nbtn), (const mfbd_nbtn_info_t *)MFBD_SECTION_END(GROUP, nbtn));    \
     } while (0)
 #else
 #define MFBD_GROUP_SCAN_NBTN(GROUP)             do{} while(0)
@@ -544,12 +549,12 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
 #define MFBD_GROUP_SCAN_MBTN(GROUP)                                                                                 \
     do                                                                                                              \
     {                                                                                                               \
-        mfbd_mbtn_scan(&(MFBD_GROUP_NAME(GROUP)), MFBD_SECTION_START(GROUP, mbtn), MFBD_SECTION_END(GROUP, mbtn));  \
+        mfbd_mbtn_scan((const mfbd_group_t *)&(MFBD_GROUP_NAME(GROUP)), (const mfbd_mbtn_info_t *)MFBD_SECTION_START(GROUP, mbtn), (const mfbd_mbtn_info_t *)MFBD_SECTION_END(GROUP, mbtn));  \
     } while (0)
 #define MFBD_GROUP_RESET_MBTN(GROUP)                                                        \
     do                                                                                      \
     {                                                                                       \
-        mfbd_mbtn_reset(MFBD_SECTION_START(GROUP, mbtn), MFBD_SECTION_END(GROUP, mbtn));    \
+        mfbd_mbtn_reset((const mfbd_mbtn_info_t *)MFBD_SECTION_START(GROUP, mbtn), (const mfbd_mbtn_info_t *)MFBD_SECTION_END(GROUP, mbtn));    \
     } while (0)
 #else
 #define MFBD_GROUP_SCAN_MBTN(GROUP)             do{} while(0)
@@ -632,7 +637,7 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
         }                                                     \
     } while(0)
 #else
-#define MFBD_GROUP_SCAN_AFTER(GROUP)              do{} while(0)
+#define MFBD_GROUP_SCAN_PREPARE(GROUP)              do{} while(0)
 #endif  /* MFBD_USE_BTN_SCAN_PRE_FUNC */
 
 #if MFBD_USE_BTN_SCAN_AFTER_FUNC
@@ -645,7 +650,7 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
         }                                                     \
     } while(0)
 #else
-#define MFBD_GROUP_SCAN_AFTER(GROUP)              do{} while(0)
+#define MFBD_GROUP_SCAN_AFTER(GROUP)                do{} while(0)
 #endif  /* MFBD_USE_BTN_SCAN_AFTER_FUNC */
 
 /*
