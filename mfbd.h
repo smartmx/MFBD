@@ -12,6 +12,7 @@
  * 2022-08-15     smartmx      fix bugs.
  * 2022-09-07     smartmx      add default define apis.
  * 2023-03-15     smartmx      add state declaration.
+ * 2023-07-03     smartmx      add Section Definition option.
  *
  */
 
@@ -20,12 +21,19 @@
 
 #include "mfbd_cfg.h"
 
+#if (MFBD_USE_SECTION_DEFINITION == 0)
+
 typedef enum
 {
     MFBD_BTN_STATE_UP = 0,
     MFBD_BTN_STATE_DOWN,
     MFBD_BTN_STATE_LONG,
 } MFBD_BTN_STATE_t;
+
+#define MFBD_DOWN_CODE_NAME(NAME)                       NAME##_DOWN_CODE                /* when using tbtn/nbtn default define api, this is down-code name. */
+#define MFBD_UP_CODE_NAME(NAME)                         NAME##_UP_CODE                  /* when using tbtn/nbtn/mbtn default define api, this is up-code name. */
+#define MFBD_LONG_CODE_NAME(NAME)                       NAME##_LONG_CODE                /* when using nbtn/mbtn default define api, this is long-code name. */
+#define MFBD_DOWN_CODES_NAME(NAME)                      NAME##_DOWN_CODES               /* when using mbtn default define api, this is long-codes name. */
 
 /* tiny button definitions, tiny button functions only support down and up event. */
 #if MFBD_PARAMS_SAME_IN_GROUP
@@ -429,5 +437,7 @@ typedef struct _mfbd_group_struct
 extern void mfbd_group_scan(const mfbd_group_t *_pbtn_group);
 
 extern void mfbd_group_reset(const mfbd_group_t *_pbtn_group);
+
+#endif  /* (MFBD_USE_SECTION_DEFINITION == 0) */
 
 #endif

@@ -9,6 +9,18 @@ MFBD尽可能的减少了RAM的使用，将能保存在Flash中的参数都保�
 MFBD通过类似电脑对按键的处理方式，将每个按键的不同操作分配不同的键值。  
 同时mfbd采用了回调函数的机制，通过回调函数将键值上报到上层应用程序，当然用户也可以直接在回调函数中进行操作。  
 
+## MFBD版本
+
+MFBD有传统定义方式和利用编译器特性的段定义（Section-Definition）方式。  
+使用段定义方式将会极大程度减少代码编写量，但是会受限于编译器，目前仅支持`Keil`，`IAR`，`GCC`。
+通过配置`mfbd_cfg.h`中的`MFBD_USE_SECTION_DEFINITION`为`0`或`非0`，为`非0`时即可启用段定义。即使用`mfbd_sd.c`和`mfbd_sd.h`中的API。
+
+普通定义请看[如下章节](#mfbd-button定义)
+
+段定义请看[如下章节](#mfbd段定义)
+
+两者之间程序不兼容，需要重新写程序。
+
 ## MFBD移植和配置
 
 MFBD移植只需将文件添加到工程目录即可，配置项都已经汇总到mfbd_cfg.h中：
@@ -46,6 +58,9 @@ typedef uint32_t    mfbd_btn_index_t;
  */
 #define MFBD_PARAMS_SAME_IN_GROUP           1
 
+/* set MFBD_MULTICLICK_STATE_AUTO_RESET to 1 will auto set multiclick state to 0 when reach to max multicick state. */
+#define MFBD_MULTICLICK_STATE_AUTO_RESET    1
+
 ```
 
 `mfbd_btn_code_t`：按键键值的类型。  
@@ -74,6 +89,8 @@ typedef uint32_t    mfbd_btn_index_t;
 该选项可以用来进行低功耗管理，通过在检测后关闭相应外设的电源等操作。  
 
 `MFBD_PARAMS_SAME_IN_GROUP`：当所有按键的扫描滤波时间、长按时间、重复上报时间、连击释放时间一致的时候，可以将该宏置为`1`。此时，每个按键的info结构体中将不再存放上述事件参数，而把时间参数存放在group结构体中。当该选项使能的时候，无法在启用长按事件(long count)的时候单独禁用某个按键的重复上报事件(repeat count)，但可以通过设置`repeat_time = 0`禁用全部按键的重复上报事件。
+
+`MFBD_MULTICLICK_STATE_AUTO_RESET`：当mbtn达到最大连击次数时，连击次数是否自动返回未连击状态。为`1`，则自动返回0状态，下次连击则返回按键连击0按键码，为`0`，则必须等带连击释放时间达到后，才会自动返回0状态，下次连击则返回按键连击最高状态按键码。
 
 ## MFBD按键事件
 
@@ -279,6 +296,22 @@ MFBD_MBTN_DEFAULT_DEFINE(NAME, ...);
 
 ```MFBD_MBTN_DEFAULT_DEFINE(HI, ...)```，将会默认使用```HI_UP_CODE```和```HI_LONG_CODE```作为按键值。所以程序中需要准备好该两个名称的按键值枚举变量或宏定义。另外MBTN需要提供一个变量名为```HI_DOWN_CODES```的按键值数组，作为多次连击的按键值。
 
+可以通过在枚举变量时，使用如下宏定义，来快速生成名称：
+
+```c
+#define MFBD_DOWN_CODE_NAME(NAME)                       NAME##_DOWN_CODE                /* when using tbtn/nbtn default define api, this is down-code name. */
+#define MFBD_UP_CODE_NAME(NAME)                         NAME##_UP_CODE                  /* when using tbtn/nbtn/mbtn default define api, this is up-code name. */
+#define MFBD_LONG_CODE_NAME(NAME)                       NAME##_LONG_CODE                /* when using nbtn/mbtn default define api, this is long-code name. */
+```
+
+mbtn需要提供数组来代表各种连击时发送的按键值，数组名参考下面的宏定义：
+
+```c
+#define MFBD_DOWN_CODES_NAME(NAME)                      NAME##_DOWN_CODES               /* when using mbtn default define api, this is long-codes name. */
+
+mfbd_btn_code_t MFBD_DOWN_CODES_DEF(mbtn)[4] = {0x1501, 0x1511, 0x1521, 0x1531};        /* example */
+```
+
 ## MFBD 使用示例
 
 这里使用上方MFBD定义示例中宏定义的方式定义按键进行操作  
@@ -387,6 +420,158 @@ extern void mfbd_group_scan(const mfbd_group_t *_pbtn_group);
 
 ```c
 extern void mfbd_group_reset(const mfbd_group_t *_pbtn_group);
+```
+
+## MFBD段定义
+
+段定义（Section-Definition）是程序编译期间会将不同的程序内容放到不同的程序段中，再通过链接器链接为固件。段定义同样也支持默认定义方式。
+
+### GROUP命名和其他对应名称关系
+
+按键依靠组名分类，同样的组必须在一块，所以，使用段定义时，必须使用宏定义的方式来定义按键。  
+首先需要给组起一个名字，例如：`test_btns`。
+
+那么通过以下定义：
+
+```c
+#define MFBD_GROUP_NAME(GROUP)              mfbd_group_##GROUP
+#define MFBD_GROUP_EXTERN(GROUP)            extern const mfbd_group_t MFBD_GROUP_NAME(GROUP)
+```
+
+程序中真实的变量组名为`mfbd_group_test_btns`
+
+使用`MFBD_GROUP_DEFINE`宏不需要考虑名称，宏定义里面会自动生成名字：
+
+```c
+#define MFBD_GROUP_DEFINE(GROUP, IS_BTN_DOWN_FUNC, BTN_VALUE_REPORT_FUNC, ...)      \
+    const mfbd_group_t MFBD_GROUP_NAME(GROUP) = {                                   \
+        IS_BTN_DOWN_FUNC,                                                           \
+        BTN_VALUE_REPORT_FUNC,                                                      \
+        __VA_ARGS__                                                                 \
+    }
+```
+
+同样的，通过以下宏定义，将给每组按键中不同的按键类型定义不同的段名（section name）：
+
+```c
+#define _MFBD_SECTION(X)                                __MFBD_SECTION(#X)
+#define MFBD_SECTION(GROUP, BTN_KIND)                   _MFBD_SECTION(GROUP##_##BTN_KIND)
+
+#define MFBD_SECTION_START(GROUP, BTN_KIND)             _MFBD_SECTION_START(GROUP##_##BTN_KIND)
+#define MFBD_SECTION_END(GROUP, BTN_KIND)               _MFBD_SECTION_END(GROUP##_##BTN_KIND)
+```
+
+例如，按键组为`test_btns`，则默认：
+
+组内的`tbtn`对应的段名为`test_btns_tbtn`。
+
+组内的`nbtn`对应的段名为`test_btns_nbtn`。
+
+组内的`mbtn`对应的段名为`test_btns_mbtn`。
+
+### MDK和IAR编译器使用方法
+
+MDK和IAR中都在软件内部进行更改了代码编译后的链接操作，可以很方便的使用，无需修改工程文件，直接使用宏定义即可。
+
+### GCC使用方法
+
+GUN gcc工程需要在工程的ld文件中找到`rodata`的初始化链接代码。并添加ld文件指定的函数。
+
+例如，按键组为`test_btns`，则默认：
+
+组内的`tbtn`对应的段名开始地址为`test_btns_tbtn_start`，结束地址为`test_btns_tbtn_end`  
+组内的`nbtn`对应的段名为`test_btns_nbtn_start`，结束地址为`test_btns_nbtn_end`  
+组内的`mbtn`对应的段名为`test_btns_mbtn_start`，结束地址为`test_btns_mbtn_end`  
+
+```ld
+.text :
+{
+    . = ALIGN(4);
+    KEEP(*(SORT_NONE(.handle_reset)))
+    *(.text)
+    *(.text.*)
+    
+    /* this is for tbtn in test_btns. */
+    . = ALIGN(4);
+    PROVIDE(test_btns_tbtn_start = .);
+    KEEP(*(test_btns_tbtn*))
+    PROVIDE(test_btns_tbtn_end = .);
+    
+    /* this is for nbtn in test_btns. */
+    . = ALIGN(4);
+    PROVIDE(test_btns_nbtn_start = .);
+    KEEP(*(test_btns_nbtn*))
+    PROVIDE(test_btns_nbtn_end = .);
+
+    /* this is for mbtn in test_btns. */
+    . = ALIGN(4);
+    PROVIDE(test_btns_mbtn_start = .);
+    KEEP(*(test_btns_mbtn*))
+    PROVIDE(test_btns_mbtn_end = .);
+
+    *(.rodata)
+    *(.rodata*)
+    *(.glue_7)
+    *(.glue_7t)
+    *(.gnu.linkonce.t.*)
+    . = ALIGN(4);
+} >FLASH AT>FLASH 
+```
+
+### 段定义调用按键检测
+
+由于使用了段定义，所以程序无法判断一个组是否有所有的使能的按键种类。所以可能会出错，此时需要通过自行调整检测的宏来进行按键检测。
+
+默认的按键扫描宏如下：
+
+```c
+#define MFBD_GROUP_SCAN(GROUP)                      \
+    do                                              \
+    {                                               \
+        MFBD_GROUP_SCAN_PREPARE(GROUP);             \
+        MFBD_GROUP_SCAN_TBTN(GROUP);                \
+        MFBD_GROUP_SCAN_NBTN(GROUP);                \
+        MFBD_GROUP_SCAN_MBTN(GROUP);                \
+        MFBD_GROUP_SCAN_AFTER(GROUP);               \
+    } while (0)
+```
+
+如果在`mfbd_cfg.h`中使能了`mbtn`，但是这个组又没有用到`mbtn`，那么就会出错，因为程序中没有`mbtn`对应的这个段。这时，自行将上述宏复制到程序中，删除没有用到的`MFBD_GROUP_SCAN_NBTN(GROUP);`即可：
+
+```c
+    do                                              
+    {                                               
+        MFBD_GROUP_SCAN_PREPARE(GROUP);             
+        MFBD_GROUP_SCAN_TBTN(GROUP);                
+        MFBD_GROUP_SCAN_NBTN(GROUP);             
+        MFBD_GROUP_SCAN_AFTER(GROUP);               
+    } while (0)
+```
+
+### 段定义调用按键复位
+
+和段定义调用按键检测一样，需要自行调整程序，删除组内没有用到的按键复位函数宏。
+
+默认的按键复位宏如下：
+
+```c
+#define MFBD_GROUP_RESET(GROUP)                     \
+    do                                              \
+    {                                               \
+        MFBD_GROUP_RESET_TBTN(GROUP);               \
+        MFBD_GROUP_RESET_NBTN(GROUP);               \
+        MFBD_GROUP_RESET_MBTN(GROUP);               \
+    } while (0)
+```
+
+如果在`mfbd_cfg.h`中使能了`mbtn`，但是这个组又没有用到`mbtn`，那么就会出错，因为程序中没有`mbtn`对应的这个段。这时，自行将上述宏复制到程序中，删除没有用到的`MFBD_GROUP_RESET_MBTN(GROUP);`即可：
+
+```c
+    do                                              
+    {          
+        MFBD_GROUP_RESET_TBTN(GROUP);                
+        MFBD_GROUP_RESET_NBTN(GROUP);            
+    } while (0)
 ```
 
 ## 移植使用示例工程
