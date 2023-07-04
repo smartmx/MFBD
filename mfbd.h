@@ -30,6 +30,11 @@ typedef enum
     MFBD_BTN_STATE_LONG,
 } MFBD_BTN_STATE_t;
 
+#define MFBD_DOWN_CODE_NAME(NAME)                       NAME##_DOWN_CODE                /* when using tbtn/nbtn default define api, this is down-code name. */
+#define MFBD_UP_CODE_NAME(NAME)                         NAME##_UP_CODE                  /* when using tbtn/nbtn/mbtn default define api, this is up-code name. */
+#define MFBD_LONG_CODE_NAME(NAME)                       NAME##_LONG_CODE                /* when using nbtn/mbtn default define api, this is long-code name. */
+#define MFBD_DOWN_CODES_NAME(NAME)                      NAME##_DOWN_CODES               /* when using mbtn default define api, this is long-codes name. */
+
 /* tiny button definitions, tiny button functions only support down and up event. */
 #if MFBD_PARAMS_SAME_IN_GROUP
 

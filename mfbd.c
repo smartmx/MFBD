@@ -348,7 +348,7 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group)
                     {
                         _pbtn_group->btn_value_report(_pbtn->btn_info->btn_up_code);
                     }
-
+#if MFBD_MULTICLICK_STATE_AUTO_RESET
                     /* if multiclick_state is not 0 and less than max_multiclick_state, inc multiclick_state */
                     if (((MFBD_MULTICLICK_TIME_IN_FUC) != 0)  \
                             && (_pbtn->multiclick_state < _pbtn->btn_info->max_multiclick_state)  \
@@ -357,6 +357,18 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group)
                         _pbtn->multiclick_state++;
                         _pbtn->multiclick_count = 0;
                     }
+#else
+                    /* if multiclick_state is not 0 and less than max_multiclick_state, inc multiclick_state */
+                    if (((MFBD_MULTICLICK_TIME_IN_FUC) != 0)  \
+                            && (!((((MFBD_LONG_TIME_IN_FUC) > 0) && (_pbtn->btn_info->btn_long_code != 0)) && (_pbtn->long_count >= (MFBD_LONG_TIME_IN_FUC)))))
+                    {
+                        if(_pbtn->multiclick_state < _pbtn->btn_info->max_multiclick_state)
+                        {
+                            _pbtn->multiclick_state++;
+                        }
+                        _pbtn->multiclick_count = 0;
+                    }
+#endif
                     else
                     {
                         /* over max multi-click times or (long event and repeat event) happened, reset to 0. */

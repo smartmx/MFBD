@@ -23,6 +23,11 @@ typedef enum
     MFBD_BTN_STATE_LONG,
 } MFBD_BTN_STATE_t;
 
+#define MFBD_DOWN_CODE_NAME(NAME)                       NAME##_DOWN_CODE                /* when using tbtn/nbtn default define api, this is down-code name. */
+#define MFBD_UP_CODE_NAME(NAME)                         NAME##_UP_CODE                  /* when using tbtn/nbtn/mbtn default define api, this is up-code name. */
+#define MFBD_LONG_CODE_NAME(NAME)                       NAME##_LONG_CODE                /* when using nbtn/mbtn default define api, this is long-code name. */
+#define MFBD_DOWN_CODES_NAME(NAME)                      NAME##_DOWN_CODES               /* when using mbtn default define api, this is long-codes name. */
+
 #if defined(__CC_ARM) || defined(__CLANG_ARM)           /* ARM Compiler */
 #define __MFBD_SECTION(x)                               __attribute__((section(x)))
 #define MFBD_USED                                       __attribute__((used))
@@ -438,9 +443,9 @@ typedef struct _mfbd_group_struct
 
 #define MFBD_GROUP_DEFINE(GROUP, IS_BTN_DOWN_FUNC, BTN_VALUE_REPORT_FUNC, ...)      \
     const mfbd_group_t MFBD_GROUP_NAME(GROUP) = {                                   \
-            IS_BTN_DOWN_FUNC,                                                       \
-            BTN_VALUE_REPORT_FUNC,                                                  \
-            __VA_ARGS__                                                             \
+        IS_BTN_DOWN_FUNC,                                                           \
+        BTN_VALUE_REPORT_FUNC,                                                      \
+        __VA_ARGS__                                                                 \
     }
 
 extern void mfbd_tbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_tbtn_info_t *_pbtn_info_start, const mfbd_tbtn_info_t *_pbtn_info_end);
