@@ -93,11 +93,11 @@ void mfbd_tbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_tbtn_info_t *_pb
             {
                 if (_pbtn_info->btn->state != MFBD_BTN_STATE_UP)
                 {
-                    _pbtn_info->btn->state = MFBD_BTN_STATE_UP;
                     if (_pbtn_info->btn_up_code > 0)
                     {
                         _pbtn_group->btn_value_report(_pbtn_info->btn_up_code);
                     }
+                    _pbtn_info->btn->state = MFBD_BTN_STATE_UP;
                 }
             }
         }
@@ -219,11 +219,11 @@ void mfbd_nbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_nbtn_info_t *_pb
                 {
                     if (_pbtn_info->btn->state != MFBD_BTN_STATE_UP)
                     {
-                        _pbtn_info->btn->state = MFBD_BTN_STATE_UP;
                         if (_pbtn_info->btn_up_code > 0)
                         {
                             _pbtn_group->btn_value_report(_pbtn_info->btn_up_code);
                         }
+                        _pbtn_info->btn->state = MFBD_BTN_STATE_UP;
                     }
                 }
             }
@@ -351,11 +351,11 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
             {
                 if (_pbtn_info->btn->state != MFBD_BTN_STATE_UP)
                 {
-                    _pbtn_info->btn->state = MFBD_BTN_STATE_UP;
                     if (_pbtn_info->btn_up_code > 0)
                     {
                         _pbtn_group->btn_value_report(_pbtn_info->btn_up_code);
                     }
+                    _pbtn_info->btn->state = MFBD_BTN_STATE_UP;
 #if MFBD_MULTICLICK_STATE_AUTO_RESET
                     /* if multiclick_state is not 0 and less than max_multiclick_state, inc multiclick_state */
                     if (((MFBD_MULTICLICK_TIME_IN_FUC) != 0)  \
