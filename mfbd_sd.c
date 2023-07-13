@@ -150,83 +150,83 @@ void mfbd_nbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_nbtn_info_t *_pb
             break;
         }
         if (_pbtn_group->is_btn_down_func(_pbtn_info->btn_index) != MFBD_BTN_STATE_UP)
+        {
+            if (_pbtn_info->btn->filter_count < (MFBD_FILTER_TIME_IN_FUC))
             {
-                if (_pbtn_info->btn->filter_count < (MFBD_FILTER_TIME_IN_FUC))
-                {
-                    _pbtn_info->btn->filter_count = (MFBD_FILTER_TIME_IN_FUC);
-                }
-                else if (_pbtn_info->btn->filter_count < ((MFBD_FILTER_TIME_IN_FUC) * 2))
-                {
-                    _pbtn_info->btn->filter_count++;
-                }
-                else
-                {
-                    /* it means the button is down for over filter_time. */
-                    if (_pbtn_info->btn->state == MFBD_BTN_STATE_UP)
-                    {
-                        _pbtn_info->btn->state = MFBD_BTN_STATE_DOWN;
-                        /* clear long_count. */
-                        _pbtn_info->btn->long_count = 0;
-                        if (_pbtn_info->btn_down_code > 0)
-                        {
-                            _pbtn_group->btn_value_report(_pbtn_info->btn_down_code);
-                        }
-                    }
-                    else
-                    {
-                        if (((MFBD_LONG_TIME_IN_FUC) > 0) && (_pbtn_info->btn_long_code != 0))
-                        {
-                            /* if long_time is 0 or long_code is 0, disable long and repeat check. */
-                            if (_pbtn_info->btn->long_count < (MFBD_LONG_TIME_IN_FUC))
-                            {
-                                _pbtn_info->btn->long_count++;
-                                if (_pbtn_info->btn->long_count >= (MFBD_LONG_TIME_IN_FUC))
-                                {
-                                    /* it means the button is down for over long_time. */
-                                    _pbtn_info->btn->state = MFBD_BTN_STATE_LONG;
-                                    _pbtn_info->btn->repeat_count = 0; /* long event has happened, clear repeat_count. */
-                                    _pbtn_group->btn_value_report(_pbtn_info->btn_long_code);
-                                }
-                            }
-                            else
-                            {
-                                if (((MFBD_REPEAT_TIME_IN_FUC) > 0) && (_pbtn_info->btn_down_code != 0))
-                                {
-                                    _pbtn_info->btn->repeat_count++;
-                                    if (_pbtn_info->btn->repeat_count >= (MFBD_REPEAT_TIME_IN_FUC))
-                                    {
-                                        /* repeat event has happened, clear repeat_count. */
-                                        _pbtn_info->btn->repeat_count = 0;
-                                        _pbtn_group->btn_value_report(_pbtn_info->btn_down_code);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                _pbtn_info->btn->filter_count = (MFBD_FILTER_TIME_IN_FUC);
+            }
+            else if (_pbtn_info->btn->filter_count < ((MFBD_FILTER_TIME_IN_FUC) * 2))
+            {
+                _pbtn_info->btn->filter_count++;
             }
             else
             {
-                if (_pbtn_info->btn->filter_count > (MFBD_FILTER_TIME_IN_FUC))
+                /* it means the button is down for over filter_time. */
+                if (_pbtn_info->btn->state == MFBD_BTN_STATE_UP)
                 {
-                    _pbtn_info->btn->filter_count = (MFBD_FILTER_TIME_IN_FUC);
-                }
-                else if (_pbtn_info->btn->filter_count != 0)
-                {
-                    _pbtn_info->btn->filter_count--;
+                    _pbtn_info->btn->state = MFBD_BTN_STATE_DOWN;
+                    /* clear long_count. */
+                    _pbtn_info->btn->long_count = 0;
+                    if (_pbtn_info->btn_down_code > 0)
+                    {
+                        _pbtn_group->btn_value_report(_pbtn_info->btn_down_code);
+                    }
                 }
                 else
                 {
-                    if (_pbtn_info->btn->state != MFBD_BTN_STATE_UP)
+                    if (((MFBD_LONG_TIME_IN_FUC) > 0) && (_pbtn_info->btn_long_code != 0))
                     {
-                        if (_pbtn_info->btn_up_code > 0)
+                        /* if long_time is 0 or long_code is 0, disable long and repeat check. */
+                        if (_pbtn_info->btn->long_count < (MFBD_LONG_TIME_IN_FUC))
                         {
-                            _pbtn_group->btn_value_report(_pbtn_info->btn_up_code);
+                            _pbtn_info->btn->long_count++;
+                            if (_pbtn_info->btn->long_count >= (MFBD_LONG_TIME_IN_FUC))
+                            {
+                                /* it means the button is down for over long_time. */
+                                _pbtn_info->btn->state = MFBD_BTN_STATE_LONG;
+                                _pbtn_info->btn->repeat_count = 0; /* long event has happened, clear repeat_count. */
+                                _pbtn_group->btn_value_report(_pbtn_info->btn_long_code);
+                            }
                         }
-                        _pbtn_info->btn->state = MFBD_BTN_STATE_UP;
+                        else
+                        {
+                            if (((MFBD_REPEAT_TIME_IN_FUC) > 0) && (_pbtn_info->btn_down_code != 0))
+                            {
+                                _pbtn_info->btn->repeat_count++;
+                                if (_pbtn_info->btn->repeat_count >= (MFBD_REPEAT_TIME_IN_FUC))
+                                {
+                                    /* repeat event has happened, clear repeat_count. */
+                                    _pbtn_info->btn->repeat_count = 0;
+                                    _pbtn_group->btn_value_report(_pbtn_info->btn_down_code);
+                                }
+                            }
+                        }
                     }
                 }
             }
+        }
+        else
+        {
+            if (_pbtn_info->btn->filter_count > (MFBD_FILTER_TIME_IN_FUC))
+            {
+                _pbtn_info->btn->filter_count = (MFBD_FILTER_TIME_IN_FUC);
+            }
+            else if (_pbtn_info->btn->filter_count != 0)
+            {
+                _pbtn_info->btn->filter_count--;
+            }
+            else
+            {
+                if (_pbtn_info->btn->state != MFBD_BTN_STATE_UP)
+                {
+                    if (_pbtn_info->btn_up_code > 0)
+                    {
+                        _pbtn_group->btn_value_report(_pbtn_info->btn_up_code);
+                    }
+                    _pbtn_info->btn->state = MFBD_BTN_STATE_UP;
+                }
+            }
+        }
         _pbtn_info++;
     }
 }
@@ -351,11 +351,6 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
             {
                 if (_pbtn_info->btn->state != MFBD_BTN_STATE_UP)
                 {
-                    if (_pbtn_info->btn_up_code > 0)
-                    {
-                        _pbtn_group->btn_value_report(_pbtn_info->btn_up_code);
-                    }
-                    _pbtn_info->btn->state = MFBD_BTN_STATE_UP;
 #if MFBD_MULTICLICK_STATE_AUTO_RESET
                     /* if multiclick_state is not 0 and less than max_multiclick_state, inc multiclick_state */
                     if (((MFBD_MULTICLICK_TIME_IN_FUC) != 0)  \
@@ -382,6 +377,11 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
                         /* over max multi-click times or (long event and repeat event) happened, reset to 0. */
                         _pbtn_info->btn->multiclick_state = 0;
                     }
+                    if (_pbtn_info->btn_up_code > 0)
+                    {
+                        _pbtn_group->btn_value_report(_pbtn_info->btn_up_code);
+                    }
+                    _pbtn_info->btn->state = MFBD_BTN_STATE_UP;
                 }
                 else
                 {
