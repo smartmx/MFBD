@@ -73,11 +73,11 @@ void mfbd_tbtn_scan(const mfbd_group_t *_pbtn_group)
                 /* it means the button is down for over filter_time. */
                 if (_pbtn->state == MFBD_BTN_STATE_UP)
                 {
-                    _pbtn->state = MFBD_BTN_STATE_DOWN;
                     if (_pbtn->btn_info->btn_down_code > 0)
                     {
                         _pbtn_group->btn_value_report(_pbtn->btn_info->btn_down_code);
                     }
+                    _pbtn->state = MFBD_BTN_STATE_DOWN;
                 }
             }
         }
@@ -162,13 +162,13 @@ void mfbd_nbtn_scan(const mfbd_group_t *_pbtn_group)
                 /* it means the button is down for over filter_time. */
                 if (_pbtn->state == MFBD_BTN_STATE_UP)
                 {
-                    _pbtn->state = MFBD_BTN_STATE_DOWN;
                     /* clear long_count. */
                     _pbtn->long_count = 0;
                     if (_pbtn->btn_info->btn_down_code > 0)
                     {
                         _pbtn_group->btn_value_report(_pbtn->btn_info->btn_down_code);
                     }
+                    _pbtn->state = MFBD_BTN_STATE_DOWN;
                 }
                 else
                 {
@@ -181,9 +181,9 @@ void mfbd_nbtn_scan(const mfbd_group_t *_pbtn_group)
                             if (_pbtn->long_count >= (MFBD_LONG_TIME_IN_FUC))
                             {
                                 /* it means the button is down for over long_time. */
-                                _pbtn->state = MFBD_BTN_STATE_LONG;
                                 _pbtn->repeat_count = 0; /* long event has happened, clear repeat_count. */
                                 _pbtn_group->btn_value_report(_pbtn->btn_info->btn_long_code);
+                                _pbtn->state = MFBD_BTN_STATE_LONG;
                             }
                         }
                         else
@@ -306,9 +306,9 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group)
                                 if (_pbtn->long_count >= (MFBD_LONG_TIME_IN_FUC))
                                 {
                                     /* it means the button is down for over long_time. */
-                                    _pbtn->state = MFBD_BTN_STATE_LONG;
                                     _pbtn->repeat_count = 0; /* long event has happened, clear repeat_count. */
                                     _pbtn_group->btn_value_report(_pbtn->btn_info->btn_long_code);
+                                    _pbtn->state = MFBD_BTN_STATE_LONG;
                                 }
                             }
                             else
