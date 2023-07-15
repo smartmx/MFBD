@@ -421,6 +421,13 @@ extern void mfbd_group_scan(const mfbd_group_t *_pbtn_group);
 ```c
 extern void mfbd_group_reset(const mfbd_group_t *_pbtn_group);
 ```
+### 如果一段时间没有调用按键检测，可以使用SKIP的API来跳过一段时间
+
+可以在睡眠时调用此函数，此函数不会上报键值，只是更新计数时间，使用按键当前的状态直接进行计数`times`次时间。`tbtn`由于状态只有按下弹起，所以不支持此功能。
+
+```c
+extern void mfbd_group_skip(const mfbd_group_t *_pbtn_group, mfbd_btn_count_t times);
+```
 
 ## MFBD段定义
 

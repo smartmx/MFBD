@@ -11,7 +11,7 @@
  * 2022-08-05     smartmx      add reset params function.
  * 2023-03-15     smartmx      add state declaration.
  * 2023-07-03     smartmx      add Section Definition option.
- * 2023-07-15     smartmx      add skip function.
+ * 2023-07-15     smartmx      add skip function, to reduce calling of scan functions.
  *
  */
 

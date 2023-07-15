@@ -13,7 +13,7 @@
  * 2022-09-07     smartmx      add default define apis.
  * 2023-03-15     smartmx      add state declaration.
  * 2023-07-03     smartmx      add Section Definition option.
- * 2023-07-15     smartmx      add skip function.
+ * 2023-07-15     smartmx      add skip function, to reduce calling of scan functions.
  *
  */
 

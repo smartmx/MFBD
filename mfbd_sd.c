@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-07-03     smartmx      the first version, Multi-Function Button Dectection with Section Definition.
+ * 2023-07-15     smartmx      add skip function, to reduce calling of scan functions.
  *
  */
 
@@ -237,6 +238,60 @@ void mfbd_nbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_nbtn_info_t *_pb
 }
 
 /**
+ * @brief skip some times of mfbd_btn_count_t with last state.
+ *
+ * @param _pbtn_group is a pointer of mfbd_group_t.
+ * @param times is times need to skip.
+ *
+ * @return None.
+ */
+void mfbd_nbtn_skip(const mfbd_group_t *_pbtn_group, const mfbd_nbtn_info_t *_pbtn_info_start, const mfbd_nbtn_info_t *_pbtn_info_end, mfbd_btn_count_t times)
+{
+    const mfbd_nbtn_info_t *_pbtn_info = _pbtn_info_start;
+
+    while (1)
+    {
+        if (_pbtn_info_end <= _pbtn_info)
+        {
+            break;
+        }
+        if(_pbtn_info->btn->state == MFBD_BTN_STATE_DOWN)
+        {
+            if (((MFBD_LONG_TIME_IN_FUC) > 0) && (_pbtn_info->btn_long_code != 0))
+            {
+                /* if long_time is 0 or long_code is 0, disable long and repeat check. */
+                if (_pbtn_info->btn->long_count < (MFBD_LONG_TIME_IN_FUC))
+                {
+                    if(((MFBD_LONG_TIME_IN_FUC) - 1 - _pbtn_info->btn->long_count) > times)
+                    {
+                        _pbtn_info->btn->long_count = _pbtn_info->btn->long_count + times;
+                    }
+                    else
+                    {
+                        _pbtn_info->btn->long_count = MFBD_LONG_TIME_IN_FUC - 1;
+                    }
+                }
+            }
+        }
+        else if(_pbtn_info->btn->state == MFBD_BTN_STATE_LONG)
+        {
+            if (((MFBD_REPEAT_TIME_IN_FUC) > 0) && (_pbtn_info->btn_down_code[0] != 0))
+            {
+                if(((MFBD_REPEAT_TIME_IN_FUC) - 1 - _pbtn_info->btn->repeat_count) > times)
+                {
+                    _pbtn_info->btn->repeat_count = _pbtn_info->btn->repeat_count + times;
+                }
+                else
+                {
+                    _pbtn_info->btn->repeat_count = MFBD_REPEAT_TIME_IN_FUC - 1;
+                }
+            }
+        }
+        _pbtn_info++;
+    }
+}
+
+/**
  * @brief reset all normal buttons' params.
  *
  * @param _pbtn_info_start is a pointer to the start address in flash with type mfbd_nbtn_info_t.
@@ -401,6 +456,75 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
                             _pbtn_info->btn->multiclick_state = 0;
                         }
                     }
+                }
+            }
+        }
+        _pbtn_info++;
+    }
+}
+
+/**
+ * @brief skip some times of mfbd_btn_count_t with last state.
+ *
+ * @param _pbtn_group is a pointer of mfbd_group_t.
+ * @param times is times need to skip.
+ *
+ * @return None.
+ */
+void mfbd_mbtn_skip(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd_mbtn_info_t *_pbtn_info_end, mfbd_btn_count_t times)
+{
+    const mfbd_mbtn_info_t *_pbtn_info = _pbtn_info_start;
+    while (1)
+    {
+        if(_pbtn_info->btn->state == MFBD_BTN_STATE_UP)
+        {
+            if (_pbtn_info->btn->multiclick_state != 0)
+            {
+                if (_pbtn_info->btn->multiclick_count < (MFBD_MULTICLICK_TIME_IN_FUC))
+                {
+                    if(((MFBD_MULTICLICK_TIME_IN_FUC) - _pbtn_info->btn->multiclick_count) > times)
+                    {
+                        _pbtn_info->btn->multiclick_count = _pbtn_info->btn->multiclick_count + times;
+                    }
+                    else
+                    {
+                        _pbtn_info->btn->multiclick_state = 0;
+                    }
+                }
+            }
+        }
+        else if(_pbtn_info->btn->state == MFBD_BTN_STATE_DOWN)
+        {
+            if (_pbtn_info->btn->multiclick_state == 0)
+            {
+                if (((MFBD_LONG_TIME_IN_FUC) > 0) && (_pbtn_info->btn_long_code != 0))
+                {
+                    /* if long_time is 0 or long_code is 0, disable long and repeat check. */
+                    if (_pbtn_info->btn->long_count < (MFBD_LONG_TIME_IN_FUC))
+                    {
+                        if(((MFBD_LONG_TIME_IN_FUC) - 1 - _pbtn_info->btn->long_count) > times)
+                        {
+                            _pbtn_info->btn->long_count = _pbtn_info->btn->long_count + times;
+                        }
+                        else
+                        {
+                            _pbtn_info->btn->long_count = MFBD_LONG_TIME_IN_FUC - 1;
+                        }
+                    }
+                }
+            }
+        }
+        else if(_pbtn_info->btn->state == MFBD_BTN_STATE_LONG)
+        {
+            if (((MFBD_REPEAT_TIME_IN_FUC) > 0) && (_pbtn_info->btn_down_code[0] != 0))
+            {
+                if(((MFBD_REPEAT_TIME_IN_FUC) - 1 - _pbtn_info->btn->repeat_count) > times)
+                {
+                    _pbtn_info->btn->repeat_count = _pbtn_info->btn->repeat_count + times;
+                }
+                else
+                {
+                    _pbtn_info->btn->repeat_count = MFBD_REPEAT_TIME_IN_FUC - 1;
                 }
             }
         }
