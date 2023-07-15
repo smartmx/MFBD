@@ -11,6 +11,7 @@
  * 2022-08-05     smartmx      add reset params function.
  * 2023-03-15     smartmx      add state declaration.
  * 2023-07-03     smartmx      add Section Definition option.
+ * 2023-07-15     smartmx      add skip function.
  *
  */
 
@@ -231,6 +232,59 @@ void mfbd_nbtn_scan(const mfbd_group_t *_pbtn_group)
 }
 
 /**
+ * @brief skip some times of mfbd_btn_count_t with last state.
+ *
+ * @param _pbtn_group is a pointer of mfbd_group_t.
+ * @param times is times need to skip.
+ *
+ * @return None.
+ */
+void mfbd_nbtn_skip(const mfbd_group_t *_pbtn_group, mfbd_btn_count_t times)
+{
+    mfbd_nbtn_t **_ppbtn = _pbtn_group->nbtns;
+    mfbd_nbtn_t *_pbtn = *_ppbtn;
+
+    while (_pbtn != NULL)
+    {
+        if(_pbtn->state == MFBD_BTN_STATE_DOWN)
+        {
+            if (((MFBD_LONG_TIME_IN_FUC) > 0) && (_pbtn->btn_info->btn_long_code != 0))
+            {
+                /* if long_time is 0 or long_code is 0, disable long and repeat check. */
+                if (_pbtn->long_count < (MFBD_LONG_TIME_IN_FUC))
+                {
+                    if(((MFBD_LONG_TIME_IN_FUC) - 1 - _pbtn->long_count) > times)
+                    {
+                        _pbtn->long_count = _pbtn->long_count + times;
+                    }
+                    else
+                    {
+                        _pbtn->long_count = MFBD_LONG_TIME_IN_FUC - 1;
+                    }
+                }
+            }
+        }
+        else if(_pbtn->state == MFBD_BTN_STATE_LONG)
+        {
+            if (((MFBD_REPEAT_TIME_IN_FUC) > 0) && (_pbtn->btn_info->btn_down_code[0] != 0))
+            {
+                if(((MFBD_REPEAT_TIME_IN_FUC) - 1 - _pbtn->repeat_count) > times)
+                {
+                    _pbtn->repeat_count = _pbtn->repeat_count + times;
+                }
+                else
+                {
+                    _pbtn->repeat_count = MFBD_REPEAT_TIME_IN_FUC - 1;
+                }
+            }
+        }
+
+        _ppbtn++;
+        _pbtn = *_ppbtn;
+    }
+}
+
+/**
  * @brief reset all normal buttons' params.
  *
  * @param _pbtn_group is a pointer of mfbd_group_t.
@@ -394,6 +448,79 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group)
 }
 
 /**
+ * @brief skip some times of mfbd_btn_count_t with last state.
+ *
+ * @param _pbtn_group is a pointer of mfbd_group_t.
+ * @param times is times need to skip.
+ *
+ * @return None.
+ */
+void mfbd_mbtn_skip(const mfbd_group_t *_pbtn_group, mfbd_btn_count_t times)
+{
+    mfbd_mbtn_t **_ppbtn = _pbtn_group->mbtns;
+    mfbd_mbtn_t *_pbtn = *_ppbtn;
+
+    while (_pbtn != NULL)
+    {
+        if(_pbtn->state == MFBD_BTN_STATE_UP)
+        {
+            if (_pbtn->multiclick_state != 0)
+            {
+                if (_pbtn->multiclick_count < (MFBD_MULTICLICK_TIME_IN_FUC))
+                {
+                    if(((MFBD_MULTICLICK_TIME_IN_FUC) - _pbtn->multiclick_count) > times)
+                    {
+                        _pbtn->multiclick_count = _pbtn->multiclick_count + times;
+                    }
+                    else
+                    {
+                        _pbtn->multiclick_state = 0;
+                    }
+                }
+            }
+        }
+        else if(_pbtn->state == MFBD_BTN_STATE_DOWN)
+        {
+            if (_pbtn->multiclick_state == 0)
+            {
+                if (((MFBD_LONG_TIME_IN_FUC) > 0) && (_pbtn->btn_info->btn_long_code != 0))
+                {
+                    /* if long_time is 0 or long_code is 0, disable long and repeat check. */
+                    if (_pbtn->long_count < (MFBD_LONG_TIME_IN_FUC))
+                    {
+                        if(((MFBD_LONG_TIME_IN_FUC) - 1 - _pbtn->long_count) > times)
+                        {
+                            _pbtn->long_count = _pbtn->long_count + times;
+                        }
+                        else
+                        {
+                            _pbtn->long_count = MFBD_LONG_TIME_IN_FUC - 1;
+                        }
+                    }
+                }
+            }
+        }
+        else if(_pbtn->state == MFBD_BTN_STATE_LONG)
+        {
+            if (((MFBD_REPEAT_TIME_IN_FUC) > 0) && (_pbtn->btn_info->btn_down_code[0] != 0))
+            {
+                if(((MFBD_REPEAT_TIME_IN_FUC) - 1 - _pbtn->repeat_count) > times)
+                {
+                    _pbtn->repeat_count = _pbtn->repeat_count + times;
+                }
+                else
+                {
+                    _pbtn->repeat_count = MFBD_REPEAT_TIME_IN_FUC - 1;
+                }
+            }
+        }
+
+        _ppbtn++;
+        _pbtn = *_ppbtn;
+    }
+}
+
+/**
  * @brief reset all multi-function buttons' params.
  *
  * @param _pbtn_group is a pointer of mfbd_group_t.
@@ -467,6 +594,37 @@ void mfbd_group_scan(const mfbd_group_t *_pbtn_group)
     {
         /* call after scan function */
         _pbtn_group->btn_scan_after();
+    }
+#endif
+
+}
+
+
+/**
+ * @brief skip some times with last state.
+ *
+ * @param _pbtn_group is a pointer of mfbd_group_t.
+ * @param times is times need to skip.
+ *
+ * @return None.
+ */
+void mfbd_group_skip(const mfbd_group_t *_pbtn_group, mfbd_btn_count_t times)
+{
+    /* tbtn doesn't need to skip times. */
+
+#if MFBD_USE_NORMAL_BUTTON
+    if (_pbtn_group->nbtns != NULL)
+    {
+        /* skip times of normal buttons in group.*/
+        mfbd_nbtn_skip(_pbtn_group, times);
+    }
+#endif
+
+#if MFBD_USE_MULTIFUCNTION_BUTTON
+    if (_pbtn_group->mbtns != NULL)
+    {
+        /* skip times of multifunction buttons in group.*/
+        mfbd_mbtn_skip(_pbtn_group, times);
     }
 #endif
 

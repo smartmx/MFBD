@@ -43,6 +43,8 @@
  * @brief scan all tiny buttons, and report button event value if event happened.
  *
  * @param _pbtn_group is a pointer of mfbd_group_t.
+ * @param _pbtn_info_start is a pointer to the start address in flash with type mfbd_tbtn_info_t.
+ * @param _pbtn_info_end is a pointer to the end address in flash with type mfbd_tbtn_info_t.
  *
  * @return None.
  */
@@ -108,7 +110,8 @@ void mfbd_tbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_tbtn_info_t *_pb
 /**
  * @brief reset all tiny buttons' params.
  *
- * @param _pbtn_group is a pointer of mfbd_group_t.
+ * @param _pbtn_info_start is a pointer to the start address in flash with type mfbd_tbtn_info_t.
+ * @param _pbtn_info_end is a pointer to the end address in flash with type mfbd_tbtn_info_t.
  *
  * @return None.
  */
@@ -137,6 +140,8 @@ void mfbd_tbtn_reset(const mfbd_tbtn_info_t *_pbtn_info_start, const mfbd_tbtn_i
  * @brief scan all normal buttons, and report button event value if event happened.
  *
  * @param _pbtn_group is a pointer of mfbd_group_t.
+ * @param _pbtn_info_start is a pointer to the start address in flash with type mfbd_nbtn_info_t.
+ * @param _pbtn_info_end is a pointer to the end address in flash with type mfbd_nbtn_info_t.
  *
  * @return None
  */
@@ -234,7 +239,8 @@ void mfbd_nbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_nbtn_info_t *_pb
 /**
  * @brief reset all normal buttons' params.
  *
- * @param _pbtn_group is a pointer of mfbd_group_t.
+ * @param _pbtn_info_start is a pointer to the start address in flash with type mfbd_nbtn_info_t.
+ * @param _pbtn_info_end is a pointer to the end address in flash with type mfbd_nbtn_info_t.
  *
  * @return None.
  */
@@ -265,6 +271,8 @@ void mfbd_nbtn_reset(const mfbd_nbtn_info_t *_pbtn_info_start, const mfbd_nbtn_i
  * @brief scan all multi-function buttons, and report button event value if event happened.
  *
  * @param _pbtn_group is a pointer of mfbd_group_t.
+ * @param _pbtn_info_start is a pointer to the start address in flash with type mfbd_mbtn_info_t.
+ * @param _pbtn_info_end is a pointer to the end address in flash with type mfbd_mbtn_info_t.
  *
  * @return None.
  */
@@ -403,7 +411,8 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
 /**
  * @brief reset all multi-function buttons' params.
  *
- * @param _pbtn_group is a pointer of mfbd_group_t.
+ * @param _pbtn_info_start is a pointer to the start address in flash with type mfbd_mbtn_info_t.
+ * @param _pbtn_info_end is a pointer to the end address in flash with type mfbd_mbtn_info_t.
  *
  * @return None.
  */
