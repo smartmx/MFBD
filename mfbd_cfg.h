@@ -152,4 +152,12 @@
     #define MFBD_MULTICLICK_STATE_AUTO_RESET    0
 #endif
 
+/* set MFBD_MBTN_CONTINUE_LONG_COUNT to 1 will continue count to change state to long after when multiclick state is not 0. */
+#ifdef PKG_MFBD_MBTN_CONTINUE_LONG_COUNT
+    #define MFBD_MBTN_CONTINUE_LONG_COUNT       1
+#else
+    /* if you are not use mfbd in rt-thread, you can change this instead. */
+    #define MFBD_MBTN_CONTINUE_LONG_COUNT       0
+#endif
+
 #endif /* _MFBD_CFG_H_ */
