@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2023-07-03     smartmx      the first version, Multi-Function Button Dectection with Section Definition.
  * 2023-07-15     smartmx      add skip function, to reduce calling of scan functions.
+ * 2023-07-22     smartmx      add MFBD_MBTN_MULTICLICK_LONG_EVT and MFBD_MBTN_CONTINUE_LONG_COUNT option.
  *
  */
 
@@ -365,6 +366,69 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
                     }
                     _pbtn_info->btn->state = MFBD_BTN_STATE_DOWN;
                 }
+#if MFBD_MBTN_CONTINUE_LONG_COUNT
+#if MFBD_MBTN_MULTICLICK_LONG_EVT
+                else if(_pbtn_info->btn->state == MFBD_BTN_STATE_DOWN)
+                {
+                    if (((MFBD_LONG_TIME_IN_FUC) > 0) && (_pbtn_info->btn_long_code != 0))
+                    {
+                        /* if long_time is 0 or long_code is 0, disable long and repeat check. */
+                        if (_pbtn_info->btn->long_count < (MFBD_LONG_TIME_IN_FUC))
+                        {
+                            _pbtn_info->btn->long_count++;
+                            if (_pbtn_info->btn->long_count >= (MFBD_LONG_TIME_IN_FUC))
+                            {
+                                /* it means the button is down for over long_time. */
+                                _pbtn_info->btn->repeat_count = 0; /* long event has happened, clear repeat_count. */
+                                _pbtn_group->btn_value_report(_pbtn_info->btn_long_code);
+                                _pbtn_info->btn->state = MFBD_BTN_STATE_LONG;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    /* MFBD_BTN_STATE_LONG */
+                    if (((MFBD_REPEAT_TIME_IN_FUC) > 0) && (_pbtn_info->btn_down_code[_pbtn_info->btn->multiclick_state]] != 0))
+                    {
+                        _pbtn_info->btn->repeat_count++;
+                        if (_pbtn_info->btn->repeat_count >= (MFBD_REPEAT_TIME_IN_FUC))
+                        {
+                            /* repeat event has happened, clear repeat_count. */
+                            _pbtn_info->btn->repeat_count = 0;
+                            _pbtn_group->btn_value_report(_pbtn_info->btn_down_code[_pbtn_info->btn->multiclick_state]]);
+                        }
+                    }
+                }
+#else
+                else if(_pbtn_info->btn->state == MFBD_BTN_STATE_DOWN)
+                {
+                    if (((MFBD_LONG_TIME_IN_FUC) > 0) && (_pbtn_info->btn_long_code != 0))
+                    {
+                        /* if long_time is 0 or long_code is 0, disable long and repeat check. */
+                        if (_pbtn_info->btn->long_count < (MFBD_LONG_TIME_IN_FUC))
+                        {
+                            _pbtn_info->btn->long_count++;
+                            if (_pbtn_info->btn->long_count >= (MFBD_LONG_TIME_IN_FUC))
+                            {
+                                /* it means the button is down for over long_time. */
+                                if (_pbtn_info->btn->multiclick_state == 0)
+                                {
+                                    _pbtn_info->btn->repeat_count = 0; /* long event has happened, clear repeat_count. */
+                                    _pbtn_group->btn_value_report(_pbtn_info->btn_long_code);
+                                }
+                                _pbtn_info->btn->state = MFBD_BTN_STATE_LONG;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    /* MFBD_BTN_STATE_LONG */
+                    /* we don't support repeat event here.*/
+                }
+#endif /* MFBD_MBTN_MULTICLICK_LONG_EVT */
+#else
                 else if(_pbtn_info->btn->state == MFBD_BTN_STATE_DOWN)
                 {
                     if (_pbtn_info->btn->multiclick_state == 0)
@@ -400,6 +464,7 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
                         }
                     }
                 }
+#endif /* MFBD_MBTN_CONTINUE_LONG_COUNT */
             }
         }
         else
