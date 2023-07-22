@@ -178,7 +178,7 @@ void mfbd_nbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_nbtn_info_t *_pb
                     }
                     _pbtn_info->btn->state = MFBD_BTN_STATE_DOWN;
                 }
-                else
+                else if(_pbtn_info->btn->state == MFBD_BTN_STATE_DOWN)
                 {
                     if (((MFBD_LONG_TIME_IN_FUC) > 0) && (_pbtn_info->btn_long_code != 0))
                     {
@@ -194,18 +194,19 @@ void mfbd_nbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_nbtn_info_t *_pb
                                 _pbtn_info->btn->state = MFBD_BTN_STATE_LONG;
                             }
                         }
-                        else
+                    }
+                }
+                else
+                {
+                    /* MFBD_BTN_STATE_LONG */
+                    if (((MFBD_REPEAT_TIME_IN_FUC) > 0) && (_pbtn_info->btn_down_code != 0))
+                    {
+                        _pbtn_info->btn->repeat_count++;
+                        if (_pbtn_info->btn->repeat_count >= (MFBD_REPEAT_TIME_IN_FUC))
                         {
-                            if (((MFBD_REPEAT_TIME_IN_FUC) > 0) && (_pbtn_info->btn_down_code != 0))
-                            {
-                                _pbtn_info->btn->repeat_count++;
-                                if (_pbtn_info->btn->repeat_count >= (MFBD_REPEAT_TIME_IN_FUC))
-                                {
-                                    /* repeat event has happened, clear repeat_count. */
-                                    _pbtn_info->btn->repeat_count = 0;
-                                    _pbtn_group->btn_value_report(_pbtn_info->btn_down_code);
-                                }
-                            }
+                            /* repeat event has happened, clear repeat_count. */
+                            _pbtn_info->btn->repeat_count = 0;
+                            _pbtn_group->btn_value_report(_pbtn_info->btn_down_code);
                         }
                     }
                 }
@@ -364,7 +365,7 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
                     }
                     _pbtn_info->btn->state = MFBD_BTN_STATE_DOWN;
                 }
-                else
+                else if(_pbtn_info->btn->state == MFBD_BTN_STATE_DOWN)
                 {
                     if (_pbtn_info->btn->multiclick_state == 0)
                     {
@@ -382,19 +383,20 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
                                     _pbtn_info->btn->state = MFBD_BTN_STATE_LONG;
                                 }
                             }
-                            else
-                            {
-                                if (((MFBD_REPEAT_TIME_IN_FUC) > 0) && (_pbtn_info->btn_down_code[0] != 0))
-                                {
-                                    _pbtn_info->btn->repeat_count++;
-                                    if (_pbtn_info->btn->repeat_count >= (MFBD_REPEAT_TIME_IN_FUC))
-                                    {
-                                        /* repeat event has happened, clear repeat_count. */
-                                        _pbtn_info->btn->repeat_count = 0;
-                                        _pbtn_group->btn_value_report(_pbtn_info->btn_down_code[0]);
-                                    }
-                                }
-                            }
+                        }
+                    }
+                }
+                else
+                {
+                    /* MFBD_BTN_STATE_LONG */
+                    if (((MFBD_REPEAT_TIME_IN_FUC) > 0) && (_pbtn_info->btn_down_code[0] != 0))
+                    {
+                        _pbtn_info->btn->repeat_count++;
+                        if (_pbtn_info->btn->repeat_count >= (MFBD_REPEAT_TIME_IN_FUC))
+                        {
+                            /* repeat event has happened, clear repeat_count. */
+                            _pbtn_info->btn->repeat_count = 0;
+                            _pbtn_group->btn_value_report(_pbtn_info->btn_down_code[0]);
                         }
                     }
                 }
