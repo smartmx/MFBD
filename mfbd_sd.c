@@ -37,7 +37,7 @@
 /* multiclick_time */
 #define MFBD_MULTICLICK_TIME_IN_FUC     (_pbtn_info->multiclick_time)
 
-#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+#endif  /* MFBD_PARAMS_SAME_IN_GROUP */
 
 
 #if MFBD_USE_TINY_BUTTON
@@ -133,7 +133,7 @@ void mfbd_tbtn_reset(const mfbd_tbtn_info_t *_pbtn_info_start, const mfbd_tbtn_i
     }
 }
 
-#endif
+#endif  /* MFBD_USE_TINY_BUTTON */
 
 
 #if MFBD_USE_NORMAL_BUTTON
@@ -319,7 +319,7 @@ void mfbd_nbtn_reset(const mfbd_nbtn_info_t *_pbtn_info_start, const mfbd_nbtn_i
     }
 }
 
-#endif
+#endif  /* MFBD_USE_NORMAL_BUTTON */
 
 
 #if MFBD_USE_MULTIFUCNTION_BUTTON
@@ -427,7 +427,7 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
                     /* MFBD_BTN_STATE_LONG */
                     /* we don't support repeat event here.*/
                 }
-#endif /* MFBD_MBTN_MULTICLICK_LONG_EVT */
+#endif  /* MFBD_MBTN_MULTICLICK_LONG_EVT */
 #else
                 else if(_pbtn_info->btn->state == MFBD_BTN_STATE_DOWN)
                 {
@@ -464,7 +464,7 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
                         }
                     }
                 }
-#endif /* MFBD_MBTN_CONTINUE_LONG_COUNT */
+#endif  /* MFBD_MBTN_CONTINUE_LONG_COUNT */
             }
         }
         else
@@ -501,7 +501,7 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
                         }
                         _pbtn_info->btn->multiclick_count = 0;
                     }
-#endif
+#endif  /* MFBD_MULTICLICK_STATE_AUTO_RESET */
                     else
                     {
                         /* over max multi-click times or (long event and repeat event) happened, reset to 0. */
@@ -627,6 +627,6 @@ void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd_mbtn_i
     }
 }
 
-#endif
+#endif  /* MFBD_USE_MULTIFUCNTION_BUTTON */
 
-#endif /*MFBD_USE_SECTION_DEFINITION*/
+#endif  /* MFBD_USE_SECTION_DEFINITION */

@@ -83,7 +83,7 @@ typedef struct _mfbd_tbtn_info_struct
     mfbd_btn_index_t   btn_index;                   /* parameter when calling is_btn_down_func. */
 } mfbd_tbtn_info_t;
 
-#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+#endif  /* MFBD_PARAMS_SAME_IN_GROUP */
 
 #if MFBD_PARAMS_SAME_IN_GROUP
 
@@ -139,7 +139,7 @@ typedef struct _mfbd_tbtn_info_struct
         BTN_INDEX,                                                                              \
     }
 
-#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+#endif  /* MFBD_PARAMS_SAME_IN_GROUP */
 
 #define MFBD_TBTN_EXTERN(NAME) extern mfbd_tbtn_t NAME
 
@@ -178,7 +178,7 @@ typedef struct _mfbd_nbtn_info_struct
     mfbd_btn_index_t   btn_index;                   /* parameter when calling is_btn_down_func. */
 } mfbd_nbtn_info_t;
 
-#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+#endif  /* MFBD_PARAMS_SAME_IN_GROUP */
 
 
 #if MFBD_PARAMS_SAME_IN_GROUP
@@ -251,7 +251,7 @@ typedef struct _mfbd_nbtn_info_struct
         BTN_INDEX,                                                                                      \
     }
 
-#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+#endif  /* MFBD_PARAMS_SAME_IN_GROUP */
 
 #define MFBD_NBTN_EXTERN(NAME) extern mfbd_nbtn_t NAME
 
@@ -302,7 +302,7 @@ typedef struct _mfbd_mbtn_info_struct
     unsigned char           max_multiclick_state;       /* max multiclick states. */
 } mfbd_mbtn_info_t;
 
-#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+#endif  /* MFBD_PARAMS_SAME_IN_GROUP */
 
 #if MFBD_PARAMS_SAME_IN_GROUP
 
@@ -390,7 +390,7 @@ typedef struct _mfbd_mbtn_info_struct
         MAX_MULTICLICK_STATE,                                                                                                                   \
     }
 
-#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+#endif  /* MFBD_PARAMS_SAME_IN_GROUP */
 
 #define MFBD_MBTN_EXTERN(NAME) extern mfbd_mbtn_t NAME
 
@@ -425,17 +425,17 @@ typedef struct _mfbd_group_struct
 
 #endif /* MFBD_USE_MULTIFUCNTION_BUTTON */
 
-#endif
+#endif  /* MFBD_PARAMS_SAME_IN_GROUP */
 
 #if MFBD_USE_BTN_SCAN_PRE_FUNC
     /* prepare function when start to scan buttons for each group. */
     void (*btn_scan_prepare)(void);
-#endif
+#endif  /* MFBD_USE_BTN_SCAN_PRE_FUNC */
 
 #if MFBD_USE_BTN_SCAN_AFTER_FUNC
     /* function after scanning buttons for each group. */
     void (*btn_scan_after)(void);
-#endif
+#endif  /* MFBD_USE_BTN_SCAN_AFTER_FUNC */
 
 } mfbd_group_t;
 
@@ -480,7 +480,7 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
 #else
 #define MFBD_GROUP_SCAN_TBTN(GROUP)                 do{} while(0)
 #define MFBD_GROUP_RESET_TBTN(GROUP)                do{} while(0)
-#endif
+#endif  /* MFBD_USE_TINY_BUTTON */
 
 #if MFBD_USE_NORMAL_BUTTON
 #define MFBD_GROUP_SCAN_NBTN(GROUP)                                                                                         \
@@ -508,7 +508,7 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
 #define MFBD_GROUP_SCAN_NBTN(GROUP)                 do{} while(0)
 #define MFBD_GROUP_SKIP_NBTN(GROUP, TIMES)          do{} while(0)
 #define MFBD_GROUP_RESET_NBTN(GROUP)                do{} while(0)
-#endif
+#endif  /* MFBD_USE_NORMAL_BUTTON */
 
 #if MFBD_USE_MULTIFUCNTION_BUTTON
 #define MFBD_GROUP_SCAN_MBTN(GROUP)                                                                                         \
@@ -536,7 +536,7 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
 #define MFBD_GROUP_SCAN_MBTN(GROUP)                 do{} while(0)
 #define MFBD_GROUP_SKIP_MBTN(GROUP, TIMES)          do{} while(0)
 #define MFBD_GROUP_RESET_MBTN(GROUP)                do{} while(0)
-#endif
+#endif  /* MFBD_USE_MULTIFUCNTION_BUTTON */
 
 #elif defined (__IAR_SYSTEMS_ICC__)                     /* IAR Compiler */
 
@@ -553,7 +553,8 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
     } while (0)
 #else
 #define MFBD_GROUP_SCAN_TBTN(GROUP)                 do{} while(0)
-#endif
+#endif  /* MFBD_USE_TINY_BUTTON */
+
 #if MFBD_USE_NORMAL_BUTTON
 #define MFBD_GROUP_SCAN_NBTN(GROUP)                                                                                 \
     do                                                                                                              \
@@ -574,7 +575,8 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
 #define MFBD_GROUP_SCAN_NBTN(GROUP)                 do{} while(0)
 #define MFBD_GROUP_SKIP_NBTN(GROUP, TIMES)          do{} while(0)
 #define MFBD_GROUP_RESET_NBTN(GROUP)                do{} while(0)
-#endif
+#endif  /* MFBD_USE_NORMAL_BUTTON */
+
 #if MFBD_USE_MULTIFUCNTION_BUTTON
 #define MFBD_GROUP_SCAN_MBTN(GROUP)                                                                                 \
     do                                                                                                              \
@@ -595,7 +597,7 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
 #define MFBD_GROUP_SCAN_MBTN(GROUP)                 do{} while(0)
 #define MFBD_GROUP_SKIP_MBTN(GROUP, TIMES)          do{} while(0)
 #define MFBD_GROUP_RESET_MBTN(GROUP)                do{} while(0)
-#endif
+#endif  /* MFBD_USE_MULTIFUCNTION_BUTTON */
 
 #elif defined (__GNUC__)                                /* GNU GCC Compiler */
 
@@ -617,7 +619,7 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
 #else
 #define MFBD_GROUP_SCAN_TBTN(GROUP)                 do{} while(0)
 #define MFBD_GROUP_RESET_TBTN(GROUP)                do{} while(0)
-#endif
+#endif  /* MFBD_USE_TINY_BUTTON */
 
 #if MFBD_USE_NORMAL_BUTTON
 #define MFBD_GROUP_SCAN_NBTN(GROUP)                                                                                         \
@@ -645,7 +647,7 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
 #define MFBD_GROUP_SCAN_NBTN(GROUP)                 do{} while(0)
 #define MFBD_GROUP_SKIP_NBTN(GROUP, TIMES)          do{} while(0)
 #define MFBD_GROUP_RESET_NBTN(GROUP)                do{} while(0)
-#endif
+#endif  /* MFBD_USE_NORMAL_BUTTON */
 
 #if MFBD_USE_MULTIFUCNTION_BUTTON
 #define MFBD_GROUP_SCAN_MBTN(GROUP)                                                                                         \
@@ -673,7 +675,7 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
 #define MFBD_GROUP_SCAN_MBTN(GROUP)                 do{} while(0)
 #define MFBD_GROUP_SKIP_MBTN(GROUP, TIMES)          do{} while(0)
 #define MFBD_GROUP_RESET_MBTN(GROUP)                do{} while(0)
-#endif
+#endif  /* MFBD_USE_MULTIFUCNTION_BUTTON */
 
 #else
 #error "not supported tool chain..."
@@ -735,6 +737,6 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
         MFBD_GROUP_RESET_MBTN(GROUP);               \
     } while (0)
 
-#endif /*MFBD_USE_SECTION_DEFINITION*/
+#endif  /* MFBD_USE_SECTION_DEFINITION */
 
-#endif
+#endif  /* _MFBD_SD_H_ */

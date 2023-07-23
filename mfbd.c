@@ -42,7 +42,7 @@
     /* multiclick_time */
     #define MFBD_MULTICLICK_TIME_IN_FUC     (_pbtn->btn_info->multiclick_time)
 
-#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+#endif  /* MFBD_PARAMS_SAME_IN_GROUP */
 
 
 #if MFBD_USE_TINY_BUTTON
@@ -130,7 +130,7 @@ void mfbd_tbtn_reset(const mfbd_group_t *_pbtn_group)
     }
 }
 
-#endif
+#endif  /* MFBD_USE_TINY_BUTTON */
 
 
 #if MFBD_USE_NORMAL_BUTTON
@@ -308,7 +308,7 @@ void mfbd_nbtn_reset(const mfbd_group_t *_pbtn_group)
     }
 }
 
-#endif
+#endif  /* MFBD_USE_NORMAL_BUTTON */
 
 
 #if MFBD_USE_MULTIFUCNTION_BUTTON
@@ -410,7 +410,7 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group)
                     /* MFBD_BTN_STATE_LONG */
                     /* we don't support repeat event here.*/
                 }
-#endif /* MFBD_MBTN_MULTICLICK_LONG_EVT */
+#endif  /* MFBD_MBTN_MULTICLICK_LONG_EVT */
 #else
                 else if(_pbtn->state == MFBD_BTN_STATE_DOWN)
                 {
@@ -447,7 +447,7 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group)
                         }
                     }
                 }
-#endif /* MFBD_MBTN_CONTINUE_LONG_COUNT */
+#endif  /* MFBD_MBTN_CONTINUE_LONG_COUNT */
             }
         }
         else
@@ -484,7 +484,7 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group)
                         }
                         _pbtn->multiclick_count = 0;
                     }
-#endif
+#endif  /* MFBD_MULTICLICK_STATE_AUTO_RESET */
                     else
                     {
                         /* over max multi-click times or (long event and repeat event) happened, reset to 0. */
@@ -611,7 +611,7 @@ void mfbd_mbtn_reset(const mfbd_group_t *_pbtn_group)
     }
 }
 
-#endif
+#endif  /* MFBD_USE_MULTIFUCNTION_BUTTON */
 
 
 /**
@@ -630,7 +630,7 @@ void mfbd_group_scan(const mfbd_group_t *_pbtn_group)
         /* call prepare scan function */
         _pbtn_group->btn_scan_prepare();
     }
-#endif
+#endif  /* MFBD_USE_BTN_SCAN_PRE_FUNC */
 
 #if MFBD_USE_TINY_BUTTON
     if (_pbtn_group->tbtns != NULL)
@@ -638,7 +638,7 @@ void mfbd_group_scan(const mfbd_group_t *_pbtn_group)
         /*scan tiny buttons in group.*/
         mfbd_tbtn_scan(_pbtn_group);
     }
-#endif
+#endif  /* MFBD_USE_TINY_BUTTON */
 
 #if MFBD_USE_NORMAL_BUTTON
     if (_pbtn_group->nbtns != NULL)
@@ -646,7 +646,7 @@ void mfbd_group_scan(const mfbd_group_t *_pbtn_group)
         /*scan normal buttons in group.*/
         mfbd_nbtn_scan(_pbtn_group);
     }
-#endif
+#endif  /* MFBD_USE_NORMAL_BUTTON */
 
 #if MFBD_USE_MULTIFUCNTION_BUTTON
     if (_pbtn_group->mbtns != NULL)
@@ -654,7 +654,7 @@ void mfbd_group_scan(const mfbd_group_t *_pbtn_group)
         /*scan multifunction buttons in group.*/
         mfbd_mbtn_scan(_pbtn_group);
     }
-#endif
+#endif  /* MFBD_USE_MULTIFUCNTION_BUTTON */
 
 #if MFBD_USE_BTN_SCAN_AFTER_FUNC
     if (_pbtn_group->btn_scan_after != NULL)
@@ -662,7 +662,7 @@ void mfbd_group_scan(const mfbd_group_t *_pbtn_group)
         /* call after scan function */
         _pbtn_group->btn_scan_after();
     }
-#endif
+#endif  /* MFBD_USE_BTN_SCAN_AFTER_FUNC */
 
 }
 
@@ -685,7 +685,7 @@ void mfbd_group_skip(const mfbd_group_t *_pbtn_group, mfbd_btn_count_t times)
         /* skip times of normal buttons in group.*/
         mfbd_nbtn_skip(_pbtn_group, times);
     }
-#endif
+#endif  /* MFBD_USE_NORMAL_BUTTON */
 
 #if MFBD_USE_MULTIFUCNTION_BUTTON
     if (_pbtn_group->mbtns != NULL)
@@ -693,7 +693,7 @@ void mfbd_group_skip(const mfbd_group_t *_pbtn_group, mfbd_btn_count_t times)
         /* skip times of multifunction buttons in group.*/
         mfbd_mbtn_skip(_pbtn_group, times);
     }
-#endif
+#endif  /* MFBD_USE_MULTIFUCNTION_BUTTON */
 
 }
 
@@ -714,7 +714,7 @@ void mfbd_group_reset(const mfbd_group_t *_pbtn_group)
         /*reset tiny buttons in group.*/
         mfbd_tbtn_reset(_pbtn_group);
     }
-#endif
+#endif  /* MFBD_USE_TINY_BUTTON */
 
 #if MFBD_USE_NORMAL_BUTTON
     if (_pbtn_group->nbtns != NULL)
@@ -722,7 +722,7 @@ void mfbd_group_reset(const mfbd_group_t *_pbtn_group)
         /*reset normal buttons in group.*/
         mfbd_nbtn_reset(_pbtn_group);
     }
-#endif
+#endif  /* MFBD_USE_NORMAL_BUTTON */
 
 #if MFBD_USE_MULTIFUCNTION_BUTTON
     if (_pbtn_group->mbtns != NULL)
@@ -730,7 +730,7 @@ void mfbd_group_reset(const mfbd_group_t *_pbtn_group)
         /*reset multifunction buttons in group.*/
         mfbd_mbtn_reset(_pbtn_group);
     }
-#endif
+#endif  /* MFBD_USE_MULTIFUCNTION_BUTTON */
 
 }
 
