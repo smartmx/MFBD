@@ -560,6 +560,67 @@ void mfbd_mbtn_skip(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
                 }
             }
         }
+#if MFBD_MBTN_CONTINUE_LONG_COUNT
+#if MFBD_MBTN_MULTICLICK_LONG_EVT
+        else if(_pbtn_info->btn->state == MFBD_BTN_STATE_DOWN)
+        {
+            if (((MFBD_LONG_TIME_IN_FUC) > 0) && (_pbtn_info->btn_long_code != 0))
+            {
+                /* if long_time is 0 or long_code is 0, disable long and repeat check. */
+                if (_pbtn_info->btn->long_count < (MFBD_LONG_TIME_IN_FUC))
+                {
+                    if(((MFBD_LONG_TIME_IN_FUC) - 1 - _pbtn_info->btn->long_count) > times)
+                    {
+                        _pbtn_info->btn->long_count = _pbtn_info->btn->long_count + times;
+                    }
+                    else
+                    {
+                        _pbtn_info->btn->long_count = MFBD_LONG_TIME_IN_FUC - 1;
+                    }
+                }
+            }
+        }
+        else
+        {
+            /* MFBD_BTN_STATE_LONG, if(_pbtn_info->btn->state == MFBD_BTN_STATE_LONG) */
+            if (((MFBD_REPEAT_TIME_IN_FUC) > 0) && (_pbtn_info->btn_down_code[_pbtn_info->btn->multiclick_state] != 0))
+            {
+                if(((MFBD_REPEAT_TIME_IN_FUC) - 1 - _pbtn_info->btn->repeat_count) > times)
+                {
+                    _pbtn_info->btn->repeat_count = _pbtn_info->btn->repeat_count + times;
+                }
+                else
+                {
+                    _pbtn_info->btn->repeat_count = MFBD_REPEAT_TIME_IN_FUC - 1;
+                }
+            }
+        }
+#else
+        else if(_pbtn_info->btn->state == MFBD_BTN_STATE_DOWN)
+        {
+            if (((MFBD_LONG_TIME_IN_FUC) > 0) && (_pbtn_info->btn_long_code != 0))
+            {
+                /* if long_time is 0 or long_code is 0, disable long and repeat check. */
+                if (_pbtn_info->btn->long_count < (MFBD_LONG_TIME_IN_FUC))
+                {
+                    if(((MFBD_LONG_TIME_IN_FUC) - 1 - _pbtn_info->btn->long_count) > times)
+                    {
+                        _pbtn_info->btn->long_count = _pbtn_info->btn->long_count + times;
+                    }
+                    else
+                    {
+                        _pbtn_info->btn->long_count = MFBD_LONG_TIME_IN_FUC - 1;
+                    }
+                }
+            }
+        }
+        else
+        {
+            /* MFBD_BTN_STATE_LONG, if(_pbtn_info->btn->state == MFBD_BTN_STATE_LONG) */
+            /* we don't support repeat event here.*/
+        }
+#endif  /* MFBD_MBTN_MULTICLICK_LONG_EVT */
+#else
         else if(_pbtn_info->btn->state == MFBD_BTN_STATE_DOWN)
         {
             if (_pbtn_info->btn->multiclick_state == 0)
@@ -581,8 +642,9 @@ void mfbd_mbtn_skip(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
                 }
             }
         }
-        else if(_pbtn_info->btn->state == MFBD_BTN_STATE_LONG)
+        else
         {
+            /* MFBD_BTN_STATE_LONG, if(_pbtn_info->btn->state == MFBD_BTN_STATE_LONG) */
             if (((MFBD_REPEAT_TIME_IN_FUC) > 0) && (_pbtn_info->btn_down_code[0] != 0))
             {
                 if(((MFBD_REPEAT_TIME_IN_FUC) - 1 - _pbtn_info->btn->repeat_count) > times)
@@ -595,6 +657,7 @@ void mfbd_mbtn_skip(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
                 }
             }
         }
+#endif  /* MFBD_MBTN_CONTINUE_LONG_COUNT */
         _pbtn_info++;
     }
 }
