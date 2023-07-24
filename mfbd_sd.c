@@ -389,14 +389,14 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
                 else
                 {
                     /* MFBD_BTN_STATE_LONG */
-                    if (((MFBD_REPEAT_TIME_IN_FUC) > 0) && (_pbtn_info->btn_down_code[_pbtn_info->btn->multiclick_state]] != 0))
+                    if (((MFBD_REPEAT_TIME_IN_FUC) > 0) && (_pbtn_info->btn_down_code[_pbtn_info->btn->multiclick_state] != 0))
                     {
                         _pbtn_info->btn->repeat_count++;
                         if (_pbtn_info->btn->repeat_count >= (MFBD_REPEAT_TIME_IN_FUC))
                         {
                             /* repeat event has happened, clear repeat_count. */
                             _pbtn_info->btn->repeat_count = 0;
-                            _pbtn_group->btn_value_report(_pbtn_info->btn_down_code[_pbtn_info->btn->multiclick_state]]);
+                            _pbtn_group->btn_value_report(_pbtn_info->btn_down_code[_pbtn_info->btn->multiclick_state]);
                         }
                     }
                 }
@@ -483,17 +483,23 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
                 {
 #if MFBD_MULTICLICK_STATE_AUTO_RESET
                     /* if multiclick_state is not 0 and less than max_multiclick_state, inc multiclick_state */
-                    if (((MFBD_MULTICLICK_TIME_IN_FUC) != 0)  \
-                            && (_pbtn_info->btn->multiclick_state < _pbtn_info->max_multiclick_state)  \
-                            && (_pbtn_info->btn->state == MFBD_BTN_STATE_DOWN))
+                    if (((MFBD_MULTICLICK_TIME_IN_FUC) != 0)
+                            && (_pbtn_info->btn->multiclick_state < _pbtn_info->max_multiclick_state)
+#if (MFBD_MBTN_CONTINUE_LONG_COUNT==0)
+                            && (_pbtn_info->btn->state == MFBD_BTN_STATE_DOWN)
+#endif  /* (MFBD_MBTN_CONTINUE_LONG_COUNT==0) */
+                            )
                     {
                         _pbtn_info->btn->multiclick_state++;
                         _pbtn_info->btn->multiclick_count = 0;
                     }
 #else
                     /* if multiclick_state is not 0 and less than max_multiclick_state, inc multiclick_state */
-                    if (((MFBD_MULTICLICK_TIME_IN_FUC) != 0)  \
-                            && (_pbtn_info->btn->state == MFBD_BTN_STATE_DOWN))
+                    if (((MFBD_MULTICLICK_TIME_IN_FUC) != 0)
+#if (MFBD_MBTN_CONTINUE_LONG_COUNT==0)
+                            && (_pbtn_info->btn->state == MFBD_BTN_STATE_DOWN)
+#endif  /* (MFBD_MBTN_CONTINUE_LONG_COUNT==0) */
+                            )
                     {
                         if(_pbtn_info->btn->multiclick_state < _pbtn_info->max_multiclick_state)
                         {
