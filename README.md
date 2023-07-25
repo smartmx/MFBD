@@ -103,7 +103,7 @@ typedef uint32_t    mfbd_btn_index_t;
 `MFBD_MULTICLICK_STATE_AUTO_RESET`：当mbtn达到最大连击次数时，连击次数是否自动返回未连击状态。为`1`，则自动返回0状态，下次连击则返回按键连击0按键码，为`0`，则必须等带连击释放时间达到后，才会自动返回0状态，下次连击则返回按键连击最高状态按键码。
 
 `MFBD_MBTN_CONTINUE_LONG_COUNT`：当mbtn触发连击后，是否继续进行长按检测，为`1`，则会继续检测长按状态，为`0`，则不会继续检测。
-
+ 
 `MFBD_MBTN_MULTICLICK_LONG_EVT`：本宏只在`MFBD_MBTN_CONTINUE_LONG_COUNT`为`1`时生效。为`1`，则会继续上报多击长按后继续上报按键值，长按上报长按键值后，继续计数在重复事件发生后，会上报本次连击的按键值；为`0`，则不会上报按键值，只会改变按键状态，而且mbtn的重复事件被禁用。
 
 ## MFBD按键事件
@@ -126,7 +126,7 @@ typedef uint32_t    mfbd_btn_index_t;
 连击事件中，每次按键按下后，都会上报指定次数的连击按键值。  
 其实连击事件是不应该由按键驱动层进行检测的，但是嵌入式环境资源紧张，不可以像电脑那样交给应用层处理。
 **注意：多次连击事件和长按事件是冲突的，当长按事件发生，不会进行多次连击的检测。当触发多次连击检测后，也不会进行长按事件的检测**
-通过配置宏`MFBD_MBTN_CONTINUE_LONG_COUNT`为1，和`MFBD_MBTN_MULTICLICK_LONG_EVT`为1，可以实现连击和长按的共存。
+在1.0.5版本后，可以通过配置宏`MFBD_MBTN_CONTINUE_LONG_COUNT`为1，和`MFBD_MBTN_MULTICLICK_LONG_EVT`为1，可以实现连击和长按的共存。
 
 ## MFBD按键组结构体
 
