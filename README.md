@@ -516,19 +516,19 @@ GUN gcc工程需要在工程的ld文件中找到`rodata`的初始化链接代码
     /* this is for tbtn in test_btns. */
     . = ALIGN(4);
     PROVIDE(test_btns_tbtn_start = .);
-    KEEP(*(test_btns_tbtn*))
+    KEEP (*(SORT(test_btns_tbtn*)))
     PROVIDE(test_btns_tbtn_end = .);
     
     /* this is for nbtn in test_btns. */
     . = ALIGN(4);
     PROVIDE(test_btns_nbtn_start = .);
-    KEEP(*(test_btns_nbtn*))
+    KEEP (*(SORT(test_btns_nbtn*)))
     PROVIDE(test_btns_nbtn_end = .);
 
     /* this is for mbtn in test_btns. */
     . = ALIGN(4);
     PROVIDE(test_btns_mbtn_start = .);
-    KEEP(*(test_btns_mbtn*))
+    KEEP (*(SORT(test_btns_mbtn*)))
     PROVIDE(test_btns_mbtn_end = .);
 
     *(.rodata)
