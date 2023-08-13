@@ -710,7 +710,7 @@ extern void mfbd_mbtn_reset(const mfbd_mbtn_info_t *_pbtn_info_start, const mfbd
 /*
  * @Note:
  * this in a example for how to scan or reset the mfbd group,
- * if some group has not all btn types, you should write code by youself.
+ * if some group has not all btn types, you should write code by yourself.
  */
 #define MFBD_GROUP_SCAN(GROUP)                      \
     do                                              \

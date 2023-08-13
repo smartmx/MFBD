@@ -386,17 +386,17 @@ typedef struct _mfbd_group_struct
     void (*btn_value_report)(mfbd_btn_code_t btn_value);
 
 #if MFBD_USE_TINY_BUTTON
-    /* pointer to the head of tiny buttons array */
+    /* pointer to the head of tiny buttons pointer array */
     mfbd_tbtn_t **tbtns;
 #endif  /* MFBD_USE_TINY_BUTTON */
 
 #if MFBD_USE_NORMAL_BUTTON
-    /* pointer to the head of normal buttons array */
+    /* pointer to the head of normal buttons pointer array */
     mfbd_nbtn_t **nbtns;
 #endif  /* MFBD_USE_NORMAL_BUTTON */
 
 #if MFBD_USE_MULTIFUCNTION_BUTTON
-    /* pointer to the head of multifunction buttons array */
+    /* pointer to the head of multifunction buttons pointer array */
     mfbd_mbtn_t **mbtns;
 #endif  /* MFBD_USE_MULTIFUCNTION_BUTTON */
 
