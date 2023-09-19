@@ -14,6 +14,7 @@
  * 2023-03-15     smartmx      add state declaration.
  * 2023-07-03     smartmx      add Section Definition option.
  * 2023-07-15     smartmx      add skip function, to reduce calling of scan functions.
+ * 2023-09-19     smartmx      improve performance, add MFBD_BTN_STATE_SKIP.
  *
  */
 
@@ -29,6 +30,7 @@ typedef enum
     MFBD_BTN_STATE_UP = 0,
     MFBD_BTN_STATE_DOWN,
     MFBD_BTN_STATE_LONG,
+    MFBD_BTN_STATE_SKIP,
 } MFBD_BTN_STATE_t;
 
 #define MFBD_DOWN_CODE_NAME(NAME)                       NAME##_DOWN_CODE                /* when using tbtn/nbtn default define api, this is down-code name. */

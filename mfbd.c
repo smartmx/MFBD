@@ -13,7 +13,7 @@
  * 2023-07-03     smartmx      add Section Definition option.
  * 2023-07-15     smartmx      add skip function, to reduce calling of scan functions.
  * 2023-07-22     smartmx      add MFBD_MBTN_MULTICLICK_LONG_EVT and MFBD_MBTN_CONTINUE_LONG_COUNT option.
- * 2023-08-10     smartmx      improve performance.
+ * 2023-09-19     smartmx      improve performance, add MFBD_BTN_STATE_SKIP.
  *
  */
 
@@ -61,10 +61,12 @@ void mfbd_tbtn_scan(const mfbd_group_t *_pbtn_group)
 {
     mfbd_tbtn_t **_ppbtn = _pbtn_group->tbtns;
     mfbd_tbtn_t *_pbtn = *_ppbtn;
+    MFBD_BTN_STATE_t btn_state;
 
     while (MFBD_BTN_IN_FUC != NULL)
     {
-        if (_pbtn_group->is_btn_down_func(MFBD_BTN_INFO_IN_FUC->btn_index) != MFBD_BTN_STATE_UP)
+        btn_state = _pbtn_group->is_btn_down_func(MFBD_BTN_INFO_IN_FUC->btn_index);
+        if (btn_state == MFBD_BTN_STATE_DOWN)
         {
             if(MFBD_BTN_IN_FUC->filter_count >= ((MFBD_FILTER_TIME_IN_FUC) * 2))
             {
@@ -87,7 +89,7 @@ void mfbd_tbtn_scan(const mfbd_group_t *_pbtn_group)
                 MFBD_BTN_IN_FUC->filter_count = (MFBD_FILTER_TIME_IN_FUC);
             }
         }
-        else
+        else if (btn_state == MFBD_BTN_STATE_UP)
         {
             if (MFBD_BTN_IN_FUC->filter_count == 0)
             {
@@ -153,10 +155,12 @@ void mfbd_nbtn_scan(const mfbd_group_t *_pbtn_group)
 {
     mfbd_nbtn_t **_ppbtn = _pbtn_group->nbtns;
     mfbd_nbtn_t *_pbtn = *_ppbtn;
+    MFBD_BTN_STATE_t btn_state;
 
     while (MFBD_BTN_IN_FUC != NULL)
     {
-        if (_pbtn_group->is_btn_down_func(MFBD_BTN_INFO_IN_FUC->btn_index) != MFBD_BTN_STATE_UP)
+        btn_state = _pbtn_group->is_btn_down_func(MFBD_BTN_INFO_IN_FUC->btn_index);
+        if (btn_state == MFBD_BTN_STATE_DOWN)
         {
           if(MFBD_BTN_IN_FUC->filter_count >= ((MFBD_FILTER_TIME_IN_FUC) * 2))
           {
@@ -232,7 +236,7 @@ void mfbd_nbtn_scan(const mfbd_group_t *_pbtn_group)
                 MFBD_BTN_IN_FUC->filter_count = (MFBD_FILTER_TIME_IN_FUC);
             }
         }
-        else
+        else if (btn_state == MFBD_BTN_STATE_UP)
         {
             if (MFBD_BTN_IN_FUC->filter_count == 0)
             {
@@ -349,9 +353,12 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group)
 {
     mfbd_mbtn_t **_ppbtn = _pbtn_group->mbtns;
     mfbd_mbtn_t *_pbtn = *_ppbtn;
+    MFBD_BTN_STATE_t btn_state;
+
     while (MFBD_BTN_IN_FUC != NULL)
     {
-        if (_pbtn_group->is_btn_down_func(MFBD_BTN_INFO_IN_FUC->btn_index) != MFBD_BTN_STATE_UP)
+        btn_state = _pbtn_group->is_btn_down_func(MFBD_BTN_INFO_IN_FUC->btn_index);
+        if (btn_state == MFBD_BTN_STATE_DOWN)
         {
             if(MFBD_BTN_IN_FUC->filter_count >= ((MFBD_FILTER_TIME_IN_FUC) * 2))
             {
@@ -501,7 +508,7 @@ void mfbd_mbtn_scan(const mfbd_group_t *_pbtn_group)
                 MFBD_BTN_IN_FUC->filter_count = (MFBD_FILTER_TIME_IN_FUC);
             }
         }
-        else
+        else if (btn_state == MFBD_BTN_STATE_UP)
         {
             if (MFBD_BTN_IN_FUC->filter_count == 0)
             {
