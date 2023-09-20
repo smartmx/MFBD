@@ -23,7 +23,7 @@ typedef enum
     MFBD_BTN_STATE_UP = 0,
     MFBD_BTN_STATE_DOWN,
     MFBD_BTN_STATE_LONG,
-    MFBD_BTN_STATE_SKIP,
+    MFBD_BTN_STATE_SKIP = 0xff,
 } MFBD_BTN_STATE_t;
 
 #define MFBD_DOWN_CODE_NAME(NAME)                       NAME##_DOWN_CODE                /* when using tbtn/nbtn default define api, this is down-code name. */
