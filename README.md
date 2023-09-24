@@ -337,6 +337,8 @@ mfbd_btn_code_t MFBD_DOWN_CODES_DEF(mbtn)[4] = {0x1501, 0x1511, 0x1521, 0x1531};
 
 在读取按键状态的函数中，如果按键按下了，应当返回`MFBD_BTN_STATE_DOWN`，否则返回`MFBD_BTN_STATE_UP`。
 
+针对在矩阵键盘中鬼键，还有另一个状态`MFBD_BTN_STATE_SKIP`，当函数返回`MFBD_BTN_STATE_SKIP`后，MFBD会直接跳过对该按键的检测。
+
 ```c
 unsigned char bsp_btn_check(mfbd_btn_index_t btn_index)
 {
