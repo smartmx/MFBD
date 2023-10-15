@@ -5,8 +5,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-02-22     smartmx      the first version
- * 2022-03-15     smartmx      each mbtn has it's own max multi-click times
+ * 2022-02-22     smartmx      the first version.
+ * 2022-03-15     smartmx      each mbtn has it's own max multi-click times.
  * 2022-04-16     smartmx      drop list definitions, use array, each group has all btn types.
  * 2022-08-05     smartmx      add reset params function.
  * 2022-08-15     smartmx      fix bugs.
@@ -14,6 +14,7 @@
  * 2023-03-15     smartmx      add state declaration.
  * 2023-07-03     smartmx      add Section Definition option.
  * 2023-07-15     smartmx      add skip function, to reduce calling of scan functions.
+ * 2023-09-19     smartmx      improve performance, add MFBD_BTN_STATE_SKIP.
  *
  */
 
@@ -29,6 +30,7 @@ typedef enum
     MFBD_BTN_STATE_UP = 0,
     MFBD_BTN_STATE_DOWN,
     MFBD_BTN_STATE_LONG,
+    MFBD_BTN_STATE_SKIP = 0xff,
 } MFBD_BTN_STATE_t;
 
 #define MFBD_DOWN_CODE_NAME(NAME)                       NAME##_DOWN_CODE                /* when using tbtn/nbtn default define api, this is down-code name. */
@@ -56,7 +58,7 @@ typedef struct _mfbd_tbtn_info_struct
     mfbd_btn_index_t   btn_index;                   /* parameter when calling is_btn_down_func. */
 } mfbd_tbtn_info_t;
 
-#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+#endif  /* MFBD_PARAMS_SAME_IN_GROUP */
 
 typedef struct _mfbd_tiny_btn_struct
 {
@@ -119,7 +121,7 @@ mfbd_tbtn_t NAME = {                                                    \
         0,                                                              \
 }
 
-#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+#endif  /* MFBD_PARAMS_SAME_IN_GROUP */
 
 #define MFBD_TBTN_EXTERN(NAME) extern mfbd_tbtn_t NAME
 
@@ -151,7 +153,7 @@ typedef struct _mfbd_nbtn_info_struct
     mfbd_btn_index_t   btn_index;                   /* parameter when calling is_btn_down_func. */
 } mfbd_nbtn_info_t;
 
-#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+#endif  /* MFBD_PARAMS_SAME_IN_GROUP */
 
 typedef struct _mfbd_normal_btn_struct
 {
@@ -229,7 +231,7 @@ mfbd_nbtn_t NAME = {                                                            
         0,                                                                                          \
 }
 
-#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+#endif  /* MFBD_PARAMS_SAME_IN_GROUP */
 
 #define MFBD_NBTN_EXTERN(NAME) extern mfbd_nbtn_t NAME
 
@@ -264,7 +266,7 @@ typedef struct _mfbd_mbtn_info_struct
     unsigned char      max_multiclick_state;    /* max multiclick states. */
 } mfbd_mbtn_info_t;
 
-#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+#endif  /* MFBD_PARAMS_SAME_IN_GROUP */
 /*
  * @Note:
  * repeat_count and long_count are conflict to multi-click.
@@ -368,7 +370,7 @@ mfbd_mbtn_t NAME = {                                                            
         0,                                                                                                                                  \
 }
 
-#endif /*MFBD_PARAMS_SAME_IN_GROUP*/
+#endif  /* MFBD_PARAMS_SAME_IN_GROUP */
 
 #define MFBD_MBTN_EXTERN(NAME) extern mfbd_mbtn_t NAME
 
@@ -386,19 +388,19 @@ typedef struct _mfbd_group_struct
     void (*btn_value_report)(mfbd_btn_code_t btn_value);
 
 #if MFBD_USE_TINY_BUTTON
-    /* pointer to the head of tiny buttons array */
+    /* pointer to the head of tiny buttons pointer array */
     mfbd_tbtn_t **tbtns;
-#endif
+#endif  /* MFBD_USE_TINY_BUTTON */
 
 #if MFBD_USE_NORMAL_BUTTON
-    /* pointer to the head of normal buttons array */
+    /* pointer to the head of normal buttons pointer array */
     mfbd_nbtn_t **nbtns;
-#endif
+#endif  /* MFBD_USE_NORMAL_BUTTON */
 
 #if MFBD_USE_MULTIFUCNTION_BUTTON
-    /* pointer to the head of multifunction buttons array */
+    /* pointer to the head of multifunction buttons pointer array */
     mfbd_mbtn_t **mbtns;
-#endif
+#endif  /* MFBD_USE_MULTIFUCNTION_BUTTON */
 
 /* if set MFBD_PARAMS_SAME_IN_GROUP to 1, all btns in group has same params. */
 #if MFBD_PARAMS_SAME_IN_GROUP
@@ -413,25 +415,25 @@ typedef struct _mfbd_group_struct
 
     mfbd_btn_count_t   long_time;               /* long time when button still down, set 0 will disable long time and repeat time count. */
 
-#endif /* MFBD_USE_NORMAL_BUTTON || MFBD_USE_MULTIFUCNTION_BUTTON */
+#endif  /* MFBD_USE_NORMAL_BUTTON || MFBD_USE_MULTIFUCNTION_BUTTON */
 
 #if MFBD_USE_MULTIFUCNTION_BUTTON
 
     mfbd_btn_count_t   multiclick_time;         /* multi-click time when button still up, set 0 will disable multi-click time count. */
 
-#endif /* MFBD_USE_MULTIFUCNTION_BUTTON */
+#endif  /* MFBD_USE_MULTIFUCNTION_BUTTON */
 
-#endif
+#endif  /* MFBD_PARAMS_SAME_IN_GROUP */
 
 #if MFBD_USE_BTN_SCAN_PRE_FUNC
     /* prepare function when start to scan buttons for each group. */
     void (*btn_scan_prepare)(void);
-#endif
+#endif  /* MFBD_USE_BTN_SCAN_PRE_FUNC */
 
 #if MFBD_USE_BTN_SCAN_AFTER_FUNC
     /* function after scanning buttons for each group. */
     void (*btn_scan_after)(void);
-#endif
+#endif  /* MFBD_USE_BTN_SCAN_AFTER_FUNC */
 
 } mfbd_group_t;
 
@@ -443,4 +445,4 @@ extern void mfbd_group_reset(const mfbd_group_t *_pbtn_group);
 
 #endif  /* (MFBD_USE_SECTION_DEFINITION == 0) */
 
-#endif
+#endif  /* _MFBD_H_ */

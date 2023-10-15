@@ -5,13 +5,14 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-02-22     smartmx      the first version
- * 2022-03-15     smartmx      each mbtn has it's own max multi-click times
+ * 2022-02-22     smartmx      the first version.
+ * 2022-03-15     smartmx      each mbtn has it's own max multi-click times.
  * 2022-04-16     smartmx      drop list definitions, use arraylist, each group has all btn types.
  * 2022-08-05     smartmx      add reset params function.
  * 2022-12-04     smartmx      change some definitions, add rtconfig.h.
  * 2023-03-25     smartmx      add some comment.
  * 2023-07-03     smartmx      add Section Definition option.
+ * 2023-07-22     smartmx      add MFBD_MBTN_MULTICLICK_LONG_EVT and MFBD_MBTN_CONTINUE_LONG_COUNT option.
  *
  */
 
@@ -150,6 +151,30 @@
 #else
     /* if you are not use mfbd in rt-thread, you can change this instead. */
     #define MFBD_MULTICLICK_STATE_AUTO_RESET    0
+#endif
+
+/* set MFBD_MBTN_CONTINUE_LONG_COUNT to 1 will continue count to change state to long after when multiclick state is not 0. */
+#ifdef PKG_MFBD_MBTN_CONTINUE_LONG_COUNT
+    #define MFBD_MBTN_CONTINUE_LONG_COUNT       1
+#else
+    /* if you are not use mfbd in rt-thread, you can change this instead. */
+    #define MFBD_MBTN_CONTINUE_LONG_COUNT       0
+#endif
+
+#if MFBD_MBTN_CONTINUE_LONG_COUNT
+/*
+ * @Note:
+ * MFBD_MBTN_MULTICLICK_LONG_EVT only valid when MFBD_MBTN_CONTINUE_LONG_COUNT is not 0.
+ * When MFBD_MBTN_MULTICLICK_LONG_EVT is 1, it will still report long code and repeat downcodes after multiclick.
+ */
+#ifdef PKG_MFBD_MBTN_MULTICLICK_LONG_EVT
+    #define MFBD_MBTN_MULTICLICK_LONG_EVT       1
+#else
+    /* if you are not use mfbd in rt-thread, you can change this instead. */
+    #define MFBD_MBTN_MULTICLICK_LONG_EVT       0
+#endif
+#else
+    #define MFBD_MBTN_MULTICLICK_LONG_EVT       0
 #endif
 
 #endif /* _MFBD_CFG_H_ */

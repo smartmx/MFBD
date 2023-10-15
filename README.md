@@ -61,6 +61,16 @@ typedef uint32_t    mfbd_btn_index_t;
 /* set MFBD_MULTICLICK_STATE_AUTO_RESET to 1 will auto set multiclick state to 0 when reach to max multicick state. */
 #define MFBD_MULTICLICK_STATE_AUTO_RESET    1
 
+/* set MFBD_MBTN_CONTINUE_LONG_COUNT to 1 will continue count to change state to long after when multiclick state is not 0. */
+#define MFBD_MBTN_CONTINUE_LONG_COUNT       0
+
+/*
+ * @Note:
+ * MFBD_MBTN_MULTICLICK_LONG_EVT only valid when MFBD_MBTN_CONTINUE_LONG_COUNT is not 0.
+ * When MFBD_MBTN_MULTICLICK_LONG_EVT is 1, it will still report long code and repeat downcodes after multiclick.
+ */
+#define MFBD_MBTN_MULTICLICK_LONG_EVT       0
+
 ```
 
 `mfbd_btn_code_t`：按键键值的类型。  
@@ -92,6 +102,10 @@ typedef uint32_t    mfbd_btn_index_t;
 
 `MFBD_MULTICLICK_STATE_AUTO_RESET`：当mbtn达到最大连击次数时，连击次数是否自动返回未连击状态。为`1`，则自动返回0状态，下次连击则返回按键连击0按键码，为`0`，则必须等带连击释放时间达到后，才会自动返回0状态，下次连击则返回按键连击最高状态按键码。
 
+`MFBD_MBTN_CONTINUE_LONG_COUNT`：当mbtn触发连击后，是否继续进行长按检测，为`1`，则会继续检测长按状态，为`0`，则不会继续检测。
+ 
+`MFBD_MBTN_MULTICLICK_LONG_EVT`：本宏只在`MFBD_MBTN_CONTINUE_LONG_COUNT`为`1`时生效。为`1`，则会继续上报多击长按后继续上报按键值，长按上报长按键值后，继续计数在重复事件发生后，会上报本次连击的按键值；为`0`，则不会上报按键值，只会改变按键状态，而且mbtn的重复事件被禁用。
+
 ## MFBD按键事件
 
 ### 单击事件
@@ -112,6 +126,7 @@ typedef uint32_t    mfbd_btn_index_t;
 连击事件中，每次按键按下后，都会上报指定次数的连击按键值。  
 其实连击事件是不应该由按键驱动层进行检测的，但是嵌入式环境资源紧张，不可以像电脑那样交给应用层处理。
 **注意：多次连击事件和长按事件是冲突的，当长按事件发生，不会进行多次连击的检测。当触发多次连击检测后，也不会进行长按事件的检测**
+在1.0.5版本后，可以通过配置宏`MFBD_MBTN_CONTINUE_LONG_COUNT`为1，和`MFBD_MBTN_MULTICLICK_LONG_EVT`为1，可以实现连击和长按的共存。
 
 ## MFBD按键组结构体
 
@@ -322,6 +337,8 @@ mfbd_btn_code_t MFBD_DOWN_CODES_DEF(mbtn)[4] = {0x1501, 0x1511, 0x1521, 0x1531};
 
 在读取按键状态的函数中，如果按键按下了，应当返回`MFBD_BTN_STATE_DOWN`，否则返回`MFBD_BTN_STATE_UP`。
 
+针对在矩阵键盘中鬼键，还有另一个状态`MFBD_BTN_STATE_SKIP`，当函数返回`MFBD_BTN_STATE_SKIP`后，MFBD会直接跳过对该按键的检测。
+
 ```c
 unsigned char bsp_btn_check(mfbd_btn_index_t btn_index)
 {
@@ -501,19 +518,19 @@ GUN gcc工程需要在工程的ld文件中找到`rodata`的初始化链接代码
     /* this is for tbtn in test_btns. */
     . = ALIGN(4);
     PROVIDE(test_btns_tbtn_start = .);
-    KEEP(*(test_btns_tbtn*))
+    KEEP (*(SORT(test_btns_tbtn*)))
     PROVIDE(test_btns_tbtn_end = .);
     
     /* this is for nbtn in test_btns. */
     . = ALIGN(4);
     PROVIDE(test_btns_nbtn_start = .);
-    KEEP(*(test_btns_nbtn*))
+    KEEP (*(SORT(test_btns_nbtn*)))
     PROVIDE(test_btns_nbtn_end = .);
 
     /* this is for mbtn in test_btns. */
     . = ALIGN(4);
     PROVIDE(test_btns_mbtn_start = .);
-    KEEP(*(test_btns_mbtn*))
+    KEEP (*(SORT(test_btns_mbtn*)))
     PROVIDE(test_btns_mbtn_end = .);
 
     *(.rodata)
