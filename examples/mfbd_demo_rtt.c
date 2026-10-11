@@ -61,7 +61,7 @@ enum
     MFBD_LONG_CODE_NAME(test_mbtn)      = 0x1502,
 };
 
-mfbd_btn_code_t MFBD_DOWN_CODES_NAME(test_mbtn)[4] = {0x1501, 0x1511, 0x1521, 0x1531};
+const mfbd_btn_code_t MFBD_DOWN_CODES_NAME(test_mbtn)[4] = {0x1501, 0x1511, 0x1521, 0x1531};
 
 #endif  /* MFBD_DEMO_USE_DEFAULT_DEFINE */
 

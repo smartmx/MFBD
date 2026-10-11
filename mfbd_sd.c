@@ -614,6 +614,10 @@ void mfbd_mbtn_skip(const mfbd_group_t *_pbtn_group, const mfbd_mbtn_info_t *_pb
     const mfbd_mbtn_info_t *_pbtn_info = _pbtn_info_start;
     while (1)
     {
+        if (_pbtn_info_end <= _pbtn_info)
+        {
+            break;
+        }
         if (MFBD_BTN_IN_FUC->state == MFBD_BTN_STATE_UP)
         {
             if (MFBD_BTN_IN_FUC->multiclick_state != 0)

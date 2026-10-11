@@ -30,8 +30,18 @@ typedef enum
     MFBD_BTN_STATE_UP = 0,
     MFBD_BTN_STATE_DOWN,
     MFBD_BTN_STATE_LONG,
-    MFBD_BTN_STATE_SKIP = 0xff,
+    MFBD_BTN_STATE_SKIP = 0xff,                     /* return this in is_btn_down_func to skip the detection of this button, all counters will keep. */
 } MFBD_BTN_STATE_t;
+
+/*
+ * @Attention:
+ * 1. When mfbd_btn_count_t is a 8-bit type, filter_time must be <= 127 and
+ *    long_time/repeat_time must be <= 254, or the counters will overflow and
+ *    events will never be reported.
+ * 2. mfbd_group_scan/mfbd_group_skip/mfbd_group_reset must be called in the
+ *    same execution context (thread or ISR), MFBD has no concurrent access
+ *    protection inside.
+ */
 
 #define MFBD_DOWN_CODE_NAME(NAME)                       NAME##_DOWN_CODE                /* when using tbtn/nbtn default define api, this is down-code name. */
 #define MFBD_UP_CODE_NAME(NAME)                         NAME##_UP_CODE                  /* when using tbtn/nbtn/mbtn default define api, this is up-code name. */
@@ -136,7 +146,7 @@ typedef struct _mfbd_nbtn_info_struct
 {
     mfbd_btn_code_t    btn_down_code;               /* keyCode when button down, set to 0 will not report it. */
     mfbd_btn_code_t    btn_up_code;                 /* keyCode when button up, set to 0 will not report it. */
-    mfbd_btn_code_t    btn_long_code;               /* keyCode when button down for long_time, set 0 will not report it ,but report btn_down_code instead. */
+    mfbd_btn_code_t    btn_long_code;               /* keyCode when button down for long_time, set 0 will disable long time and repeat time count. */
     mfbd_btn_index_t   btn_index;                   /* parameter when calling is_btn_down_func. */
 } mfbd_nbtn_info_t;
 
@@ -149,7 +159,7 @@ typedef struct _mfbd_nbtn_info_struct
     mfbd_btn_count_t   long_time;                   /* long time when button still down, set 0 will disable long time and repeat time count. */
     mfbd_btn_code_t    btn_down_code;               /* keyCode when button down, set to 0 will not report it. */
     mfbd_btn_code_t    btn_up_code;                 /* keyCode when button up, set to 0 will not report it. */
-    mfbd_btn_code_t    btn_long_code;               /* keyCode when button down for long_time, set 0 will not report it ,but report btn_down_code instead. */
+    mfbd_btn_code_t    btn_long_code;               /* keyCode when button down for long_time, set 0 will disable long time and repeat time count. */
     mfbd_btn_index_t   btn_index;                   /* parameter when calling is_btn_down_func. */
 } mfbd_nbtn_info_t;
 
@@ -246,7 +256,7 @@ typedef struct _mfbd_mbtn_info_struct
 {
     const mfbd_btn_code_t   *btn_down_code;           /* pointer to multi-click keyCodes when button down. */
     mfbd_btn_code_t         btn_up_code;              /* keyCode when button up, set to 0 will not report it. */
-    mfbd_btn_code_t         btn_long_code;            /* keyCode when button down for long_time, set 0 will not report it ,but report btn_down_code[0] instead. */
+    mfbd_btn_code_t         btn_long_code;            /* keyCode when button down for long_time, set 0 will disable long time and repeat time count. */
     mfbd_btn_index_t        btn_index;                /* parameter when calling is_btn_down_func. */
     unsigned char           max_multiclick_state;     /* max multiclick states. */
 } mfbd_mbtn_info_t;
@@ -261,7 +271,7 @@ typedef struct _mfbd_mbtn_info_struct
     mfbd_btn_count_t   multiclick_time;         /* multi-click time when button still up, set 0 will disable multi-click time count. */
     const mfbd_btn_code_t    *btn_down_code;    /* pointer to multi-click keyCodes when button down. */
     mfbd_btn_code_t    btn_up_code;             /* keyCode when button up, set to 0 will not report it. */
-    mfbd_btn_code_t    btn_long_code;           /* keyCode when button down for long_time, set 0 will not report it ,but report btn_down_code[0] instead. */
+    mfbd_btn_code_t    btn_long_code;           /* keyCode when button down for long_time, set 0 will disable long time and repeat time count. */
     mfbd_btn_index_t   btn_index;               /* parameter when calling is_btn_down_func. */
     unsigned char      max_multiclick_state;    /* max multiclick states. */
 } mfbd_mbtn_info_t;

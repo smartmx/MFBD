@@ -1,6 +1,6 @@
 # Multi-Function Button Dectection
 
-Multi-Function Button Dectection，简称MFBD，是一个基于嵌入式C语言的按键库，自动消抖，支持单击、长按单次触发、长按连续触发、双击、多击（三击、四击等等，最大256击）按键操作，可以运行于裸机和各类RTOS。
+Multi-Function Button Dectection，简称MFBD，是一个基于嵌入式C语言的按键库，自动消抖，支持单击、长按单次触发、长按连续触发、双击、多击（三击、四击等等，最大255击）按键操作，可以运行于裸机和各类RTOS。
 
 ## MFBD设计理念
 
@@ -24,6 +24,8 @@ MFBD有传统定义方式和利用编译器特性的段定义（Section-Definiti
 ## MFBD移植和配置
 
 MFBD移植只需将文件添加到工程目录即可，配置项都已经汇总到mfbd_cfg.h中：
+
+如果不使用RT-Thread，可以在编译选项中定义`MFBD_NOT_USE_RT_THREAD`（如`-DMFBD_NOT_USE_RT_THREAD`）来跳过`rtconfig.h`的包含，并通过编译选项（如`-DMFBD_USE_TINY_BUTTON=1`）或直接修改`mfbd_cfg.h`来使能相关功能。
 
 ```c
 /* mfbd_btn_code_t is the type of value of every button event. */
@@ -80,6 +82,7 @@ typedef uint32_t    mfbd_btn_index_t;
 `mfbd_btn_count_t`：按键检测时时间计数参数的类型。  
 如果为`uint8_t`，那么时间计数无法超过255，此时如果检测周期为10ms，那么将无法进行255*10ms以上的检测操作。  
 一般情况下推荐使用`uint16_t`。  
+注意：`filter_time`不能超过该类型最大值的一半（如`uint8_t`时不超过127），`long_time`和`repeat_time`不能超过该类型最大值减1（如`uint8_t`时不超过254），否则计数溢出会导致事件永远无法触发。
 
 `mfbd_btn_index_t`：调用按键检测函数时传入的参数类型。  
 按键检测函数为每个按键组都有自己单独的一个按键检测函数，在检测按键时，函数需要传入一个参数，该参数类型可根据芯片需求自定。  
@@ -445,6 +448,10 @@ extern void mfbd_group_reset(const mfbd_group_t *_pbtn_group);
 ```c
 extern void mfbd_group_skip(const mfbd_group_t *_pbtn_group, mfbd_btn_count_t times);
 ```
+
+### 注意事项
+
+`mfbd_group_scan()`、`mfbd_group_skip()`和`mfbd_group_reset()`必须在同一个执行上下文（同一线程或同一中断）中调用，MFBD内部没有对并发访问做保护，跨上下文调用会产生竞争。
 
 ## MFBD段定义
 
